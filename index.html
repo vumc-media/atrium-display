@@ -6,39 +6,42 @@
   <title>Atrium Display</title>
   <style>
     :root {
-      --bg: #0e1726;
-      --panel: rgba(255,255,255,0.08);
-      --panel-strong: rgba(255,255,255,0.14);
+      --bg: #08111d;
+      --panel: #12233a;
+      --panel-2: #1a2f4d;
+      --border: rgba(255,255,255,0.14);
       --text: #ffffff;
-      --muted: rgba(255,255,255,0.72);
+      --muted: rgba(255,255,255,0.78);
       --accent: #d8b15a;
-      --green: #71c28a;
-      --red: #cc5a5a;
-      --shadow: 0 18px 50px rgba(0,0,0,0.35);
-      --radius: 22px;
-      --border: 1px solid rgba(255,255,255,0.12);
+      --accent-2: #6ed0dc;
+      --live: #d54848;
+      --ok: #4ea86f;
+      --shadow: 0 12px 28px rgba(0,0,0,0.28);
+      --radius: 18px;
     }
 
     * { box-sizing: border-box; }
+
     html, body {
       margin: 0;
       width: 100%;
       height: 100%;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(216,177,90,0.22), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(113,194,138,0.18), transparent 28%),
-        linear-gradient(160deg, #08111d 0%, #13223a 50%, #0f1729 100%);
-      color: var(--text);
       overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #08111d;
+      color: var(--text);
+    }
+
+    body {
+      background-image: linear-gradient(180deg, #08111d 0%, #0c1930 100%);
     }
 
     .shell {
       width: 100%;
       height: 100%;
-      padding: 24px;
+      padding: 18px;
       display: grid;
-      grid-template-columns: 1.02fr 1.98fr;
+      grid-template-columns: 400px 1fr;
       gap: 18px;
     }
 
@@ -59,100 +62,101 @@
 
     .card {
       background: var(--panel);
-      border: var(--border);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
       overflow: hidden;
       position: relative;
       min-height: 0;
     }
 
-    .header-card {
-      padding: 26px 26px 22px;
+    .hero-card {
+      padding: 24px;
+      background: linear-gradient(135deg, #22344f 0%, #1c2840 55%, #243754 100%);
     }
 
     .eyebrow {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--accent);
       margin-bottom: 8px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .title {
-      font-size: clamp(2rem, 3vw, 3.3rem);
-      line-height: 1.04;
       margin: 0;
+      font-size: 2.25rem;
+      line-height: 1.02;
       font-weight: 800;
     }
 
     .subtitle {
-      margin-top: 12px;
+      margin-top: 14px;
       color: var(--muted);
-      font-size: 1.06rem;
+      font-size: 1rem;
       line-height: 1.45;
     }
 
     .countdown {
-      display: flex;
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
     }
 
     .countbox {
-      min-width: 82px;
       background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 14px;
-      padding: 10px 12px;
       text-align: center;
+      padding: 12px 8px;
     }
 
     .countbox strong {
       display: block;
-      font-size: 1.35rem;
-      color: #fff;
+      font-size: 1.7rem;
+      line-height: 1;
+      margin-bottom: 6px;
     }
 
     .countbox span {
-      font-size: 0.78rem;
-      text-transform: uppercase;
+      font-size: 0.74rem;
       letter-spacing: 0.12em;
+      text-transform: uppercase;
       color: var(--muted);
-    }
-
-    .panel-label {
-      font-size: 0.84rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 6px;
       font-weight: 700;
     }
 
-    .panel-title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      margin: 0 0 14px;
-    }
-
     .welcome-card {
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr;
       gap: 14px;
+      background: linear-gradient(180deg, #182a45 0%, #13233a 100%);
     }
 
-    .welcome-frame-wrap {
-      flex: 1;
+    .panel-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .welcome-wrap {
       min-height: 0;
-      border-radius: 18px;
+      border-radius: 14px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.09);
-      background: #06101b;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #0b1322;
     }
 
     .frame {
@@ -160,158 +164,145 @@
       height: 100%;
       border: 0;
       display: block;
-      background: #06101b;
+      background: #0b1322;
     }
 
     .clock-card {
-      padding: 22px 26px;
-      display: flex;
-      justify-content: space-between;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
       align-items: center;
-      gap: 18px;
-    }
-
-    .clock-block {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      background: linear-gradient(180deg, #1b304f 0%, #13233a 100%);
     }
 
     .clock-time {
-      font-size: clamp(1.5rem, 2vw, 2.35rem);
+      font-size: 2.3rem;
       font-weight: 800;
+      line-height: 1;
     }
 
-    .clock-date, .status-text {
+    .clock-date {
+      margin-top: 6px;
       color: var(--muted);
-      font-size: 0.98rem;
+      font-size: 0.96rem;
+    }
+
+    .status-area {
+      min-width: 0;
     }
 
     .status-pill {
-      padding: 10px 14px;
+      display: inline-block;
+      padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.12);
-      font-weight: 700;
-      white-space: nowrap;
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
     }
 
     .status-pill.live {
-      background: rgba(204,90,90,0.2);
-      border-color: rgba(204,90,90,0.45);
-      color: #ffd9d9;
+      background: rgba(213,72,72,0.22);
+      border-color: rgba(213,72,72,0.46);
+      color: #ffe5e5;
     }
 
     .status-pill.upcoming {
       background: rgba(216,177,90,0.18);
-      border-color: rgba(216,177,90,0.45);
-      color: #ffe9b4;
+      border-color: rgba(216,177,90,0.4);
+      color: #ffe7b2;
     }
 
     .status-pill.offline {
-      background: rgba(113,194,138,0.16);
-      border-color: rgba(113,194,138,0.4);
-      color: #ddffe7;
+      background: rgba(78,168,111,0.16);
+      border-color: rgba(78,168,111,0.38);
+      color: #dcffea;
     }
 
-    .hero-stage {
+    .status-text {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.3;
+    }
+
+    .main-stage {
       position: relative;
       min-height: 0;
-      overflow: hidden;
+      background: #0b1322;
     }
 
-    .hero-frame-wrap {
+    .main-shell,
+    .live-shell {
       position: absolute;
       inset: 0;
     }
 
-    .overlay {
-      position: absolute;
-      inset: auto 0 0 0;
-      padding: 24px 26px 22px;
-      background: linear-gradient(to top, rgba(4,10,18,0.88), rgba(4,10,18,0));
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    .overlay-title {
-      font-size: clamp(1.5rem, 2.1vw, 2.35rem);
-      font-weight: 800;
-      margin: 0 0 8px;
-    }
-
-    .overlay-text {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.4;
-      max-width: 900px;
-    }
-
-    .live-takeover {
-      position: absolute;
-      inset: 0;
-      z-index: 4;
+    .live-shell {
       display: none;
       background: #000;
     }
 
-    .live-takeover.active {
+    .live-shell.active {
       display: block;
     }
 
     .live-badge {
       position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 6;
-      background: var(--red);
+      top: 12px;
+      left: 12px;
+      z-index: 4;
+      background: var(--live);
       color: #fff;
+      font-size: 0.92rem;
       font-weight: 800;
-      font-size: 0.95rem;
+      padding: 7px 11px;
       border-radius: 10px;
-      padding: 7px 12px;
-      letter-spacing: 0.03em;
     }
 
-    .yt-mark {
+    .yt-badge {
       position: absolute;
-      top: 14px;
-      right: 14px;
-      z-index: 6;
+      top: 12px;
+      right: 12px;
+      z-index: 4;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 0.92rem;
       font-weight: 800;
-      font-size: 1rem;
-      background: rgba(0,0,0,0.45);
-      padding: 6px 10px;
+      padding: 7px 11px;
       border-radius: 10px;
     }
 
     .footer-strip {
-      padding: 16px 20px;
+      padding: 14px 16px;
       display: grid;
       grid-template-columns: 1fr auto auto;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
-      font-size: 0.95rem;
+      background: linear-gradient(180deg, #22344f 0%, #1a2d49 100%);
       color: var(--muted);
+      font-size: 0.94rem;
     }
 
     .tag {
-      border-radius: 999px;
       padding: 8px 12px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
       color: #fff;
-      font-weight: 700;
+      font-weight: 800;
+      font-size: 0.9rem;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1200px) {
       .shell {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
       }
-      .footer-strip {
-        grid-template-columns: 1fr;
+
+      .left-column {
+        grid-template-rows: auto auto auto;
       }
     }
   </style>
@@ -319,11 +310,11 @@
 <body>
   <div class="shell">
     <div class="left-column">
-      <section class="card header-card">
+      <section class="card hero-card">
         <div class="eyebrow">Atrium Display</div>
         <h1 class="title">Welcome to Versailles UMC</h1>
         <div class="subtitle" id="heroSubtitle">
-          Counting down to worship. During service, this display can switch over to the YouTube live feed automatically.
+          Counting down to worship. During service, the large Weekly Feed frame can switch over to the YouTube live feed automatically.
         </div>
         <div class="countdown" id="countdown"></div>
       </section>
@@ -333,17 +324,17 @@
           <div class="panel-label">Welcome Center</div>
           <h2 class="panel-title">Welcome Center Feed</h2>
         </div>
-        <div class="welcome-frame-wrap">
+        <div class="welcome-wrap">
           <iframe id="welcomeFrame" class="frame" title="Welcome Center Feed"></iframe>
         </div>
       </section>
 
       <section class="card clock-card">
-        <div class="clock-block">
+        <div>
           <div class="clock-time" id="clockTime">--:--</div>
           <div class="clock-date" id="clockDate">Loading date...</div>
         </div>
-        <div>
+        <div class="status-area">
           <div class="status-pill offline" id="statusPill">Display Mode</div>
           <div class="status-text" id="statusText">Weekly Feed is visible until service begins.</div>
         </div>
@@ -351,18 +342,15 @@
     </div>
 
     <div class="right-column">
-      <section class="card hero-stage">
-        <div class="hero-frame-wrap">
+      <section class="card main-stage">
+        <div class="main-shell">
           <iframe id="weeklyFrame" class="frame" title="Weekly Feed"></iframe>
         </div>
 
-        
-
-        <div class="live-takeover" id="liveTakeover">
+        <div class="live-shell" id="liveShell">
           <iframe id="liveFrame" class="frame" title="YouTube Live Feed" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
           <div class="live-badge">● LIVE</div>
-          <div class="yt-mark">YouTube</div>
-          
+          <div class="yt-badge">YouTube</div>
         </div>
       </section>
 
@@ -391,7 +379,7 @@
       weeklyFrame: document.getElementById('weeklyFrame'),
       welcomeFrame: document.getElementById('welcomeFrame'),
       liveFrame: document.getElementById('liveFrame'),
-      liveTakeover: document.getElementById('liveTakeover'),
+      liveShell: document.getElementById('liveShell'),
       statusPill: document.getElementById('statusPill'),
       statusText: document.getElementById('statusText'),
       footerMessage: document.getElementById('footerMessage'),
@@ -428,8 +416,7 @@
     }
 
     function weekdayToIndex(shortWeekday) {
-      const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-      return map[shortWeekday];
+      return { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[shortWeekday];
     }
 
     function minutesFromTimeString(value) {
@@ -448,7 +435,6 @@
       for (const win of CONFIG.serviceWindows) {
         const startMin = minutesFromTimeString(win.start);
         const endMin = minutesFromTimeString(win.end);
-
         if (win.day === currentWeekday && currentMinutes >= startMin && currentMinutes < endMin) {
           currentWindow = win;
         }
@@ -501,7 +487,7 @@
       const nextDate = getNextWindowDate(nextWindow, new Date());
       if (!nextDate) return;
 
-      const diff = nextDate.getTime() - new Date().getTime();
+      const diff = nextDate.getTime() - Date.now();
       if (diff <= 0) return;
 
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -523,8 +509,7 @@
         els.countdown.appendChild(div);
       }
 
-      const nextLabel = nextWindow?.label || 'next service';
-      els.heroSubtitle.textContent = `Counting down to ${nextLabel}. During worship, the large Weekly Feed frame can switch over to the YouTube live feed automatically.`;
+      els.heroSubtitle.textContent = `Counting down to ${nextWindow.label}. During service, the large Weekly Feed frame can switch over to the YouTube live feed automatically.`;
     }
 
     function updateClock() {
@@ -545,12 +530,12 @@
 
     function setLiveMode(isLive, label = 'Worship Service') {
       if (isLive) {
-        els.liveTakeover.classList.add('active');
+        els.liveShell.classList.add('active');
         els.liveFrame.src = CONFIG.youtubeEmbedUrl;
         setStatus('live', 'LIVE NOW', `${label} is currently live in the large display frame.`);
         els.footerMessage.textContent = 'YouTube Live is active in the large Weekly Feed frame.';
       } else {
-        els.liveTakeover.classList.remove('active');
+        els.liveShell.classList.remove('active');
         els.liveFrame.src = 'about:blank';
         const { nextWindow } = getScheduleStatus(new Date());
         if (nextWindow) {
