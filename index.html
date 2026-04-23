@@ -356,19 +356,13 @@
           <iframe id="weeklyFrame" class="frame" title="Weekly Feed"></iframe>
         </div>
 
-        <div class="overlay" id="weeklyOverlay">
-          <h2 class="overlay-title">Weekly Feed</h2>
-          <p class="overlay-text">Announcements, highlights, and ways to connect.</p>
-        </div>
+        
 
         <div class="live-takeover" id="liveTakeover">
           <iframe id="liveFrame" class="frame" title="YouTube Live Feed" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
           <div class="live-badge">● LIVE</div>
           <div class="yt-mark">YouTube</div>
-          <div class="overlay">
-            <h2 class="overlay-title">Live Worship Is Happening Now</h2>
-            <p class="overlay-text">The YouTube feed takes over the large Weekly Feed frame during the scheduled service window.</p>
-          </div>
+          
         </div>
       </section>
 
@@ -383,8 +377,8 @@
   <script>
     const CONFIG = {
       timezone: 'America/New_York',
-      weeklyFeedUrl: 'vumc-weekly-feed.netlify.app',
-      welcomeCenterUrl: 'welcome-center.netlify.app',
+      weeklyFeedUrl: 'https://vumc-weekly-feed.netlify.app/',
+      welcomeCenterUrl: 'https://welcome-center.netlify.app/',
       youtubeEmbedUrl: 'https://www.youtube.com/embed/live_stream?channel=UC_svgodM3blLqWEBQ5yNjmA&autoplay=1&mute=1',
       streamCheckMs: 30000,
       hardRefreshMs: 15 * 60 * 1000,
