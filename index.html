@@ -1,182 +1,745 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Atrium Display – Versailles UMC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atrium Display</title>
+  <style>
+    :root {
+      --bg: #0e1726;
+      --panel: rgba(255,255,255,0.08);
+      --panel-strong: rgba(255,255,255,0.14);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.72);
+      --accent: #d8b15a;
+      --green: #71c28a;
+      --red: #cc5a5a;
+      --shadow: 0 18px 50px rgba(0,0,0,0.35);
+      --radius: 22px;
+    }
 
-<style>
-  :root{ --rule:#e5e7eb; --yellow:#f8cf1b; --footer:#bfe5ef; --text:#0b0e14; }
-  html,body{height:100%}
-  body{
-    margin:0; background:#fff; color:var(--text);
-    font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    display:grid; grid-template-rows:auto 1fr auto auto; grid-template-columns:1fr 1fr; height:100vh;
-  }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(216,177,90,0.22), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(113,194,138,0.18), transparent 28%),
+        linear-gradient(160deg, #08111d 0%, #13223a 50%, #0f1729 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
 
-  /* Top bar */
-  header{grid-column:1/3; background:#fff; padding:14px 20px; font-weight:800; font-size:clamp(20px,2.6vw,34px)}
+    .shell {
+      width: 100%;
+      height: 100%;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1.05fr 1.95fr;
+      gap: 22px;
+    }
 
-  /* Main panels */
-  .left{grid-row:2; grid-column:1; background:transparent;} /* FreeShow NDI goes over this */
-  .right{
-    grid-row:2; grid-column:2; background:var(--yellow); display:flex; flex-direction:column;
-    border-left:1px solid var(--rule);
-  }
-  .panel{display:flex; flex-direction:column; height:100%}
-  .panel-header{background:#c62828; color:#fff; padding:10px 14px; font-weight:800; font-size:clamp(16px,2vw,22px)}
-  .vwrap{position:relative; overflow:hidden; flex:1; background:#fff}
-  .vscroll{position:absolute; inset:0; overflow:auto; scroll-behavior:smooth; padding:10px 14px}
-  .vscroll::-webkit-scrollbar{width:0;height:0}
+    .left-column,
+    .right-column {
+      min-height: 0;
+      display: grid;
+      gap: 22px;
+    }
 
-  /* QR band */
-  .qr{
-    grid-row:3; grid-column:1/3; background:#fff; padding:18px 24px; display:flex;
-    align-items:center; justify-content:center; gap:20px; border-top:1px solid var(--rule);
-  }
-  .qr-card{display:flex; align-items:center; gap:16px}
-  .qr-card .text{font-weight:800; font-size:clamp(18px,2.2vw,28px)}
-  .qr-card .url{font-weight:800; text-decoration:underline}
+    .left-column {
+      grid-template-rows: auto 1fr auto;
+    }
 
-  /* Weather footer */
-  footer{grid-row:4; grid-column:1/3; background:var(--footer); padding:10px 14px; border-top:1px solid var(--rule)}
-  .wx{display:flex; align-items:center; gap:16px; flex-wrap:wrap}
-  .wx .current{display:flex; align-items:center; gap:8px; font-weight:800}
-  .wx .badge{background:rgba(0,0,0,.07); padding:4px 8px; border-radius:999px; font-size:13px}
-  .wx .strip{display:flex; gap:12px; align-items:flex-end}
-  .wx .day{display:grid; grid-template-rows:auto auto auto; gap:2px; justify-items:center}
-  .wx .icon{font-size:20px}
-  .wx .lo{opacity:.7; font-size:12px}
+    .right-column {
+      grid-template-rows: 1fr auto;
+    }
 
-  /* Responsive (stack on narrow) */
-  @media (max-aspect-ratio:4/3){
-    body{grid-template-columns:1fr; grid-template-rows:auto auto auto auto 1fr auto}
-    .left{grid-row:2; grid-column:1; height:40vh}
-    .right{grid-row:3; grid-column:1; height:40vh}
-    .qr{grid-row:4; grid-column:1}
-    footer{grid-row:5; grid-column:1}
-  }
-</style>
-</head>
-<body>
-  <header>Welcome to Versailles UMC</header>
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+      position: relative;
+    }
 
-  <!-- LEFT: leave blank; FreeShow will overlay NDI video & audio here -->
-  <section class="left" aria-label="NDI zone (overlay from FreeShow)"></section>
+    .header-card {
+      padding: 26px 26px 22px;
+    }
 
-  <!-- RIGHT: Scrolling calendar (Church Center embed) -->
-  <section class="right">
-    <div class="panel">
-      <div class="panel-header">Scrolling Calendar</div>
-      <div class="vwrap">
-        <div class="vscroll" id="cal">
-          <!-- Church Center / Planning Center Calendar embed (list view) -->
-          <div id="pco-embed" style="min-height:100%;">
-            <script src="https://versaillesumc.churchcenter.com/assets/calendar_embed.js"
-                    data-view="list"
-                    data-height="auto"></script>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    .eyebrow {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
 
-  <!-- QR band -->
-  <section class="qr">
-    <div class="qr-card">
-      <canvas id="qr" width="140" height="140"></canvas>
-      <div>
-        <div class="text">Scan to open VUMC Connect</div>
-        <div class="url">vumc.versaillesumc.org</div>
-      </div>
-    </div>
-  </section>
+    .title {
+      font-size: clamp(2rem, 3vw, 3.4rem);
+      line-height: 1.04;
+      margin: 0;
+      font-weight: 800;
+    }
 
-  <!-- Weather footer -->
-  <footer>
-    <div class="wx" id="wx">
-      <div class="current">
-        <span id="wxIcon">⛅</span>
-        <span id="wxTemp">--°F</span>
-        <span id="wxCond">Loading…</span>
-        <span class="badge">Versailles, KY</span>
-      </div>
-      <div class="strip" id="wxStrip" aria-label="7-day forecast"></div>
-    </div>
-  </footer>
+    .subtitle {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.06rem;
+      line-height: 1.45;
+    }
 
-  <!-- libs -->
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    .clock-card {
+      padding: 22px 26px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+    }
 
-  <script>
-    /* QR */
-    new QRious({ element: document.getElementById('qr'), value: 'https://vumc.versaillesumc.org', size: 140, level: 'H' });
+    .clock-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-    /* Gentle auto-scroll for the calendar list */
-    (function(){
-      const el = document.getElementById('cal');
-      let dir = 1;
-      function step(){
-        if (!el) return;
-        const max = el.scrollHeight - el.clientHeight;
-        if (el.scrollTop >= max - 2) dir = -1;
-        if (el.scrollTop <= 2) dir = 1;
-        el.scrollTop += dir * 0.6;  // raise for faster, lower for slower
-        requestAnimationFrame(step);
+    .clock-time {
+      font-size: clamp(1.5rem, 2vw, 2.35rem);
+      font-weight: 800;
+    }
+
+    .clock-date, .status-text {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .status-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-pill.live {
+      background: rgba(204,90,90,0.2);
+      border-color: rgba(204,90,90,0.45);
+      color: #ffd9d9;
+    }
+
+    .status-pill.upcoming {
+      background: rgba(216,177,90,0.18);
+      border-color: rgba(216,177,90,0.45);
+      color: #ffe9b4;
+    }
+
+    .status-pill.offline {
+      background: rgba(113,194,138,0.16);
+      border-color: rgba(113,194,138,0.4);
+      color: #ddffe7;
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 0 0 6px;
+    }
+
+    .panel-label {
+      font-size: 0.84rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .info-card {
+      padding: 22px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .info-item strong {
+      display: block;
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .info-item span {
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 0.98rem;
+      display: block;
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .cta {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(216,177,90,0.25), rgba(255,255,255,0.08));
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 800;
+      text-align: center;
+      color: #fff;
+    }
+
+    .main-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #06101b;
+    }
+
+    .hero-stage {
+      position: relative;
+      min-height: 0;
+    }
+
+    .slide-layer,
+    .live-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 500ms ease;
+    }
+
+    .slide-layer.active,
+    .live-layer.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .slide-frame-wrap,
+    .live-frame-wrap {
+      position: absolute;
+      inset: 0;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 24px 26px 22px;
+      background: linear-gradient(to top, rgba(4,10,18,0.88), rgba(4,10,18,0));
+      pointer-events: none;
+    }
+
+    .overlay-title {
+      font-size: clamp(1.4rem, 2vw, 2.2rem);
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+
+    .overlay-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.4;
+      max-width: 900px;
+    }
+
+    .footer-strip {
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .hidden { display: none !important; }
+
+    .countdown {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .countbox {
+      min-width: 82px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .countbox strong {
+      display: block;
+      font-size: 1.35rem;
+      color: #fff;
+    }
+
+    .countbox span {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
       }
-      step();
-    })();
-
-    /* Weather (Open-Meteo) — Versailles, KY */
-    const WXCONF = { lat: 38.052, lon: -84.729 };
-    const WEMOJI = c => (
-      [0].includes(c)?'☀️':[1,2].includes(c)?'⛅':[3].includes(c)?'☁️':
-      [45,48].includes(c)?'🌫️':[51,53,55].includes(c)?'🌦️':
-      [61,63,65].includes(c)?'🌧️':[66,67].includes(c)?'🌧️❄️':
-      [71,73,75,77].includes(c)?'❄️':[80,81,82].includes(c)?'🌧️':
-      [85,86].includes(c)?'🌨️':[95,96,99].includes(c)?'⛈️':'🌡️'
-    );
-    const WLABEL = c => ({0:'Clear',1:'Mostly Sunny',2:'Partly Cloudy',3:'Cloudy',45:'Fog',48:'Freezing Fog',51:'Light Drizzle',53:'Drizzle',55:'Heavy Drizzle',61:'Light Rain',63:'Rain',65:'Heavy Rain',66:'Freezing Rain',67:'Freezing Rain',71:'Light Snow',73:'Snow',75:'Heavy Snow',77:'Snow Grains',80:'Rain Showers',81:'Rain Showers',82:'Heavy Showers',85:'Snow Showers',86:'Snow Showers',95:'Thunderstorms',96:'T’storms',99:'T’storms'})[c]||'—';
-
-    async function loadWeather(){
-      const base='https://api.open-meteo.com/v1/forecast';
-      const p=new URLSearchParams({
-        latitude: WXCONF.lat, longitude: WXCONF.lon,
-        current_weather:'true',
-        daily:'weathercode,temperature_2m_max,temperature_2m_min',
-        temperature_unit:'fahrenheit',
-        wind_speed_unit:'mph',
-        timezone:'auto',
-        forecast_days:'7'
-      });
-      try{
-        const r = await fetch(base+'?'+p.toString(), { cache:'no-store' });
-        const j = await r.json();
-        const cur=j.current_weather;
-        document.getElementById('wxIcon').textContent = WEMOJI(cur.weathercode);
-        document.getElementById('wxTemp').textContent = Math.round(cur.temperature)+'°F';
-        document.getElementById('wxCond').textContent = WLABEL(cur.weathercode);
-
-        const days=j.daily.time, codes=j.daily.weathercode, hi=j.daily.temperature_2m_max, lo=j.daily.temperature_2m_min;
-        const strip=document.getElementById('wxStrip'); strip.innerHTML='';
-        for(let i=0;i<days.length;i++){
-          const dt=new Date(days[i]);
-          const lbl=new Intl.DateTimeFormat('en-US',{weekday:'short'}).format(dt);
-          const el=document.createElement('div'); el.className='day';
-          el.innerHTML = `
-            <div class="lbl">${lbl}</div>
-            <div class="icon">${WEMOJI(codes[i])}</div>
-            <div class="hi">${Math.round(hi[i])}°</div>
-            <div class="lo">${Math.round(lo[i])}°</div>
-          `;
-          strip.appendChild(el);
-        }
-      }catch(e){
-        document.getElementById('wxCond').textContent = 'Weather unavailable';
+      .left-column {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .footer-strip {
+        grid-template-columns: 1fr;
       }
     }
-    loadWeather();
-    setInterval(loadWeather, 15*60*1000);
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="left-column">
+      <section class="card header-card">
+        <div class="eyebrow">Atrium Display</div>
+        <h1 class="title">Welcome to Versailles UMC</h1>
+        <div class="subtitle" id="heroSubtitle">
+          Stay connected with what is happening today. This screen can rotate between your weekly feed, welcome center, and live worship stream.
+        </div>
+        <div class="countdown" id="countdown"></div>
+      </section>
+
+      <section class="card info-card">
+        <div>
+          <div class="panel-label">Welcome Center</div>
+          <h2 class="panel-title">Need help getting started?</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Traditional Worship</strong>
+              <span>9:30 AM</span>
+            </div>
+            <div class="info-item">
+              <strong>Contemporary Worship</strong>
+              <span>10:30 AM</span>
+            </div>
+            <div class="info-item">
+              <strong>Get Connected</strong>
+              <span>Visit the Welcome Center, scan a QR code, or explore Church Center.</span>
+            </div>
+            <div class="info-item">
+              <strong>Need Prayer?</strong>
+              <span>Our team would love to connect with you and pray with you.</span>
+            </div>
+          </div>
+        </div>
+        <div class="cta-row">
+          <div class="cta">Welcome Center</div>
+          <div class="cta">Weekly Feed</div>
+        </div>
+      </section>
+
+      <section class="card clock-card">
+        <div class="clock-block">
+          <div class="clock-time" id="clockTime">--:--</div>
+          <div class="clock-date" id="clockDate">Loading date...</div>
+        </div>
+        <div>
+          <div class="status-pill offline" id="statusPill">Display Mode</div>
+          <div class="status-text" id="statusText">Showing Atrium content</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="right-column">
+      <section class="card hero-stage">
+        <div class="slide-layer active" id="slideLayer">
+          <div class="slide-frame-wrap">
+            <iframe id="contentFrame" class="main-frame" title="Atrium content"></iframe>
+          </div>
+          <div class="overlay">
+            <h2 class="overlay-title" id="slideTitle">Weekly Feed</h2>
+            <p class="overlay-text" id="slideText">Announcements, highlights, and ways to connect.</p>
+          </div>
+        </div>
+
+        <div class="live-layer" id="liveLayer">
+          <div class="live-frame-wrap">
+            <iframe
+              id="liveFrame"
+              class="main-frame"
+              title="YouTube Live"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+          <div class="overlay">
+            <h2 class="overlay-title">Live Worship Is Happening Now</h2>
+            <p class="overlay-text">The stream will have normal YouTube delay. This is best for awareness in the atrium, not for perfectly synced in-room audio.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card footer-strip">
+        <div id="footerMessage">Today at VUMC</div>
+        <div class="tag" id="currentSource">Weekly Feed</div>
+        <div class="tag" id="refreshStatus">Auto-refresh on</div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    /*
+      =============================================================
+      ATRIUM DISPLAY CONFIG
+      Replace the placeholders below with your real links/settings.
+      =============================================================
+    */
+    const CONFIG = {
+      timezone: 'America/New_York',
+
+      // Repo/page URLs you already have
+      weeklyFeedUrl: 'https://vumc-weekly-feed.netlify.app/',
+      welcomeCenterUrl: 'https://welcome-center.netlify.app/',
+
+      // Optional third repo/page if you want another rotation item
+      extras: [
+        // {
+        //   title: 'Next Steps',
+        //   text: 'Take your next step at VUMC.',
+        //   url: 'https://YOUR-EXTRA-PAGE-URL-HERE'
+        // }
+      ],
+
+      // YouTube live settings
+      youtubeChannelId: 'UC_svgodM3blLqWEBQ5yNjmA',
+      youtubeEmbedUrl: 'https://www.youtube.com/embed/live_stream?channel=UC_svgodM3blLqWEBQ5yNjmA&autoplay=1&mute=1',
+
+      // Rotation timing (milliseconds)
+      rotationMs: 20000,
+
+      // Refresh checks (milliseconds)
+      streamCheckMs: 60000,
+      hardRefreshMs: 15 * 60 * 1000,
+
+      // Schedule windows used when you do not have true live API detection.
+      // This is the safest fallback for a display browser.
+      serviceWindows: [
+        { day: 0, start: '09:20', end: '10:20', label: 'Traditional Worship' },
+        { day: 0, start: '10:20', end: '11:45', label: 'Contemporary Worship' }
+      ],
+
+      // Set to true if you only want the YouTube frame during scheduled windows.
+      useScheduleFallback: true
+    };
+
+    const state = {
+      activeIndex: 0,
+      rotationItems: [],
+      liveNow: false,
+      currentLabel: 'Display Mode'
+    };
+
+    const els = {
+      contentFrame: document.getElementById('contentFrame'),
+      liveFrame: document.getElementById('liveFrame'),
+      slideLayer: document.getElementById('slideLayer'),
+      liveLayer: document.getElementById('liveLayer'),
+      slideTitle: document.getElementById('slideTitle'),
+      slideText: document.getElementById('slideText'),
+      statusPill: document.getElementById('statusPill'),
+      statusText: document.getElementById('statusText'),
+      currentSource: document.getElementById('currentSource'),
+      refreshStatus: document.getElementById('refreshStatus'),
+      footerMessage: document.getElementById('footerMessage'),
+      clockTime: document.getElementById('clockTime'),
+      clockDate: document.getElementById('clockDate'),
+      countdown: document.getElementById('countdown'),
+      heroSubtitle: document.getElementById('heroSubtitle')
+    };
+
+    function buildRotationItems() {
+      const items = [
+        {
+          title: 'Weekly Feed',
+          text: 'Announcements, highlights, and ways to connect.',
+          url: CONFIG.weeklyFeedUrl
+        },
+        {
+          title: 'Welcome Center',
+          text: 'A clear front door for guests, families, and next steps.',
+          url: CONFIG.welcomeCenterUrl
+        },
+        ...CONFIG.extras.filter(item => item && item.url)
+      ];
+      state.rotationItems = items;
+    }
+
+    function formatInTimeZone(date, options) {
+      return new Intl.DateTimeFormat('en-US', { timeZone: CONFIG.timezone, ...options }).format(date);
+    }
+
+    function getPartsInTimeZone(date = new Date()) {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: CONFIG.timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        weekday: 'short'
+      });
+
+      const parts = formatter.formatToParts(date);
+      const map = {};
+      for (const p of parts) {
+        if (p.type !== 'literal') map[p.type] = p.value;
+      }
+      return map;
+    }
+
+    function weekdayToIndex(shortWeekday) {
+      const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+      return map[shortWeekday];
+    }
+
+    function minutesFromTimeString(value) {
+      const [h, m] = value.split(':').map(Number);
+      return (h * 60) + m;
+    }
+
+    function getScheduleStatus(now = new Date()) {
+      const parts = getPartsInTimeZone(now);
+      const currentWeekday = weekdayToIndex(parts.weekday);
+      const currentMinutes = (Number(parts.hour) * 60) + Number(parts.minute);
+
+      let currentWindow = null;
+      let nextWindow = null;
+
+      for (const win of CONFIG.serviceWindows) {
+        const startMin = minutesFromTimeString(win.start);
+        const endMin = minutesFromTimeString(win.end);
+
+        if (win.day === currentWeekday && currentMinutes >= startMin && currentMinutes < endMin) {
+          currentWindow = win;
+        }
+      }
+
+      if (!currentWindow) {
+        for (let offset = 0; offset < 8; offset++) {
+          const checkDay = (currentWeekday + offset) % 7;
+          const candidates = CONFIG.serviceWindows
+            .filter(win => win.day === checkDay)
+            .sort((a, b) => minutesFromTimeString(a.start) - minutesFromTimeString(b.start));
+
+          for (const candidate of candidates) {
+            const startMin = minutesFromTimeString(candidate.start);
+            if (offset > 0 || startMin > currentMinutes) {
+              nextWindow = { ...candidate, daysAway: offset };
+              return { currentWindow: null, nextWindow };
+            }
+          }
+        }
+      }
+
+      return { currentWindow, nextWindow };
+    }
+
+    function getNextWindowDate(nextWindow, now = new Date()) {
+      if (!nextWindow) return null;
+
+      const tzDateString = formatInTimeZone(now, {
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      });
+      const [month, day, year] = tzDateString.split('/').map(Number);
+      const base = new Date(year, month - 1, day);
+      base.setDate(base.getDate() + (nextWindow.daysAway || 0));
+
+      const [hours, minutes] = nextWindow.start.split(':').map(Number);
+      base.setHours(hours, minutes, 0, 0);
+      return base;
+    }
+
+    function updateCountdown() {
+      const { currentWindow, nextWindow } = getScheduleStatus(new Date());
+      els.countdown.innerHTML = '';
+
+      if (currentWindow) {
+        els.heroSubtitle.textContent = `${currentWindow.label} is currently within the scheduled window.`;
+        return;
+      }
+
+      const nextDate = getNextWindowDate(nextWindow, new Date());
+      if (!nextDate) return;
+
+      const diff = nextDate.getTime() - new Date().getTime();
+      if (diff <= 0) return;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      const parts = [
+        ['Days', days],
+        ['Hours', hours],
+        ['Minutes', minutes],
+        ['Seconds', seconds]
+      ];
+
+      for (const [label, value] of parts) {
+        const div = document.createElement('div');
+        div.className = 'countbox';
+        div.innerHTML = `<strong>${String(value).padStart(2, '0')}</strong><span>${label}</span>`;
+        els.countdown.appendChild(div);
+      }
+
+      const nextLabel = nextWindow?.label || 'next service';
+      els.heroSubtitle.textContent = `Counting down to ${nextLabel}. During worship, this display can switch over to the YouTube live feed automatically.`;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      els.clockTime.textContent = formatInTimeZone(now, {
+        hour: 'numeric', minute: '2-digit', hour12: true
+      });
+      els.clockDate.textContent = formatInTimeZone(now, {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+      });
+    }
+
+    function setStatus(mode, text) {
+      els.statusPill.className = 'status-pill ' + mode;
+      els.statusPill.textContent = state.currentLabel;
+      els.statusText.textContent = text;
+    }
+
+    function showRotationItem(index) {
+      if (!state.rotationItems.length) return;
+      const item = state.rotationItems[index % state.rotationItems.length];
+      state.activeIndex = index % state.rotationItems.length;
+      els.contentFrame.src = item.url;
+      els.slideTitle.textContent = item.title;
+      els.slideText.textContent = item.text;
+      els.currentSource.textContent = item.title;
+      els.footerMessage.textContent = item.text;
+    }
+
+    function startRotation() {
+      showRotationItem(0);
+      setInterval(() => {
+        if (state.liveNow) return;
+        showRotationItem(state.activeIndex + 1);
+      }, CONFIG.rotationMs);
+    }
+
+    function activateLiveMode(label = 'Live Worship') {
+      state.liveNow = true;
+      state.currentLabel = 'LIVE NOW';
+      els.slideLayer.classList.remove('active');
+      els.liveLayer.classList.add('active');
+      els.liveFrame.src = CONFIG.youtubeEmbedUrl;
+      els.currentSource.textContent = 'YouTube Live';
+      els.footerMessage.textContent = `${label} is active on the display.`;
+      setStatus('live', 'Displaying the live worship feed from YouTube.');
+    }
+
+    function deactivateLiveMode(nextReason = 'Showing Atrium content') {
+      state.liveNow = false;
+      state.currentLabel = 'Display Mode';
+      els.liveLayer.classList.remove('active');
+      els.slideLayer.classList.add('active');
+      els.liveFrame.src = 'about:blank';
+      setStatus('offline', nextReason);
+    }
+
+    async function checkLiveStatus() {
+      // Practical note:
+      // True YouTube live detection usually needs the YouTube Data API.
+      // For a signage browser page, schedule fallback is often simpler and more reliable.
+      // This template uses scheduled windows by default.
+
+      if (CONFIG.useScheduleFallback) {
+        const { currentWindow, nextWindow } = getScheduleStatus(new Date());
+
+        if (currentWindow) {
+          if (!state.liveNow) activateLiveMode(currentWindow.label);
+          return;
+        }
+
+        if (state.liveNow) deactivateLiveMode('Returning to weekly announcements and welcome content.');
+
+        state.currentLabel = nextWindow ? 'Up Next' : 'Display Mode';
+        const nextText = nextWindow
+          ? `${nextWindow.label} is the next scheduled worship window.`
+          : 'Showing Atrium content.';
+        setStatus(nextWindow ? 'upcoming' : 'offline', nextText);
+        return;
+      }
+
+      // Placeholder if you later add a custom Apps Script or JSON endpoint
+      // that returns { live: true/false, label: "Traditional Worship" }
+      // Example:
+      // const res = await fetch('https://YOUR-ENDPOINT/live-status.json', { cache: 'no-store' });
+      // const data = await res.json();
+      // if (data.live) activateLiveMode(data.label || 'Live Worship');
+      // else deactivateLiveMode('Returning to weekly announcements and welcome content.');
+    }
+
+    function init() {
+      buildRotationItems();
+      updateClock();
+      updateCountdown();
+      startRotation();
+      checkLiveStatus();
+
+      setInterval(() => {
+        updateClock();
+        updateCountdown();
+      }, 1000);
+
+      setInterval(checkLiveStatus, CONFIG.streamCheckMs);
+
+      setInterval(() => {
+        els.refreshStatus.textContent = 'Refreshing browser';
+        window.location.reload();
+      }, CONFIG.hardRefreshMs);
+    }
+
+    init();
   </script>
 </body>
 </html>
