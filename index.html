@@ -6,18 +6,17 @@
   <title>Atrium Display</title>
   <style>
     :root {
-      --bg: #08111d;
-      --panel: #12233a;
-      --panel-2: #1a2f4d;
+      --bg1: #08111d;
+      --bg2: #0c1930;
+      --panel: #14233a;
+      --panel2: #1b2f4c;
       --border: rgba(255,255,255,0.14);
       --text: #ffffff;
       --muted: rgba(255,255,255,0.78);
-      --accent: #d8b15a;
-      --accent-2: #6ed0dc;
+      --gold: #d8b15a;
       --live: #d54848;
-      --ok: #4ea86f;
-      --shadow: 0 12px 28px rgba(0,0,0,0.28);
       --radius: 18px;
+      --shadow: 0 12px 28px rgba(0,0,0,0.28);
     }
 
     * { box-sizing: border-box; }
@@ -28,12 +27,8 @@
       height: 100%;
       overflow: hidden;
       font-family: Arial, Helvetica, sans-serif;
-      background: #08111d;
       color: var(--text);
-    }
-
-    body {
-      background-image: linear-gradient(180deg, #08111d 0%, #0c1930 100%);
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
     }
 
     .shell {
@@ -66,27 +61,49 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
-      position: relative;
       min-height: 0;
+      position: relative;
     }
 
     .hero-card {
-      padding: 24px;
-      background: linear-gradient(135deg, #22344f 0%, #1c2840 55%, #243754 100%);
+      padding: 22px;
+      background: linear-gradient(135deg, #22344f 0%, #1b2d47 60%, #243754 100%);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .brand-row img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+
+    .brand-row span {
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      font-size: 1rem;
     }
 
     .eyebrow {
       font-size: 0.82rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      color: var(--accent);
+      color: var(--gold);
       margin-bottom: 8px;
       font-weight: 800;
     }
 
     .title {
       margin: 0;
-      font-size: 2.25rem;
+      font-size: 2.15rem;
       line-height: 1.02;
       font-weight: 800;
     }
@@ -95,7 +112,8 @@
       margin-top: 14px;
       color: var(--muted);
       font-size: 1rem;
-      line-height: 1.45;
+      line-height: 1.35;
+      font-weight: 700;
     }
 
     .countdown {
@@ -115,7 +133,7 @@
 
     .countbox strong {
       display: block;
-      font-size: 1.7rem;
+      font-size: 1.6rem;
       line-height: 1;
       margin-bottom: 6px;
     }
@@ -140,7 +158,7 @@
       font-size: 0.8rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--gold);
       font-weight: 800;
       margin-bottom: 6px;
     }
@@ -151,12 +169,13 @@
       font-weight: 800;
     }
 
-    .welcome-wrap {
+    .frame-wrap {
       min-height: 0;
       border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.1);
       background: #0b1322;
+      height: 100%;
     }
 
     .frame {
@@ -169,10 +188,6 @@
 
     .clock-card {
       padding: 18px 20px;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 16px;
-      align-items: center;
       background: linear-gradient(180deg, #1b304f 0%, #13233a 100%);
     }
 
@@ -188,52 +203,13 @@
       font-size: 0.96rem;
     }
 
-    .status-area {
-      min-width: 0;
-    }
-
-    .status-pill {
-      display: inline-block;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 0.92rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .status-pill.live {
-      background: rgba(213,72,72,0.22);
-      border-color: rgba(213,72,72,0.46);
-      color: #ffe5e5;
-    }
-
-    .status-pill.upcoming {
-      background: rgba(216,177,90,0.18);
-      border-color: rgba(216,177,90,0.4);
-      color: #ffe7b2;
-    }
-
-    .status-pill.offline {
-      background: rgba(78,168,111,0.16);
-      border-color: rgba(78,168,111,0.38);
-      color: #dcffea;
-    }
-
-    .status-text {
-      color: var(--muted);
-      font-size: 0.94rem;
-      line-height: 1.3;
-    }
-
     .main-stage {
       position: relative;
       min-height: 0;
       background: #0b1322;
     }
 
-    .main-shell,
+    .weekly-shell,
     .live-shell {
       position: absolute;
       inset: 0;
@@ -277,7 +253,7 @@
     .footer-strip {
       padding: 14px 16px;
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: 1fr auto;
       gap: 10px;
       align-items: center;
       background: linear-gradient(180deg, #22344f 0%, #1a2d49 100%);
@@ -311,12 +287,12 @@
   <div class="shell">
     <div class="left-column">
       <section class="card hero-card">
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-          <img src="https://yt3.googleusercontent.com/0VzY1FMygvH9BmYV_gu_hNyZsW1kY5VPDdeRtHxyzfcXtqM5Rc6Kongrr_dw3v5I_hwJv63vIQ=s900-c-k-c0x00ffffff-no-rj" alt="VUMC Logo" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,0.2);" />
-          <div style="font-weight:800; letter-spacing:0.04em;">VERSAILLES UMC</div>
+        <div class="brand-row">
+          <img src="https://yt3.googleusercontent.com/0VzY1FMygvH9BmYV_gu_hNyZsW1kY5VPDdeRtHxyzfcXtqM5Rc6Kongrr_dw3v5I_hwJv63vIQ=s900-c-k-c0x00ffffff-no-rj" alt="VUMC Logo" />
+          <span>VERSAILLES UMC</span>
         </div>
         <div class="eyebrow">Atrium Display</div>
-        <h1 class="title">Welcome to Our Church</h1>
+        <h1 class="title">Welcome to Versailles UMC</h1>
         <div class="subtitle" id="heroSubtitle">Next Service Starts In</div>
         <div class="countdown" id="countdown"></div>
       </section>
@@ -326,25 +302,20 @@
           <div class="panel-label">Welcome Center</div>
           <h2 class="panel-title">Welcome Center Feed</h2>
         </div>
-        <div class="welcome-wrap">
+        <div class="frame-wrap">
           <iframe id="welcomeFrame" class="frame" title="Welcome Center Feed"></iframe>
         </div>
       </section>
 
       <section class="card clock-card">
-        <div>
-          <div class="clock-time" id="clockTime">--:--</div>
-          <div class="clock-date" id="clockDate">Loading date...</div>
-        </div>
-        
-          
-        </div>
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate">Loading date...</div>
       </section>
     </div>
 
     <div class="right-column">
       <section class="card main-stage">
-        <div class="main-shell">
+        <div class="weekly-shell">
           <iframe id="weeklyFrame" class="frame" title="Weekly Feed"></iframe>
         </div>
 
@@ -357,8 +328,7 @@
 
       <section class="card footer-strip">
         <div id="footerMessage">Announcements, highlights, and ways to connect.</div>
-        <div class="tag">Weekly Feed</div>
-        <div class="tag" id="refreshStatus">Auto-refresh on</div>
+        <div class="tag" id="modeTag">Weekly Feed</div>
       </section>
     </div>
   </div>
@@ -370,7 +340,6 @@
       welcomeCenterUrl: 'https://welcome-center.netlify.app/',
       youtubeEmbedUrl: 'https://www.youtube.com/embed/live_stream?channel=UC_svgodM3blLqWEBQ5yNjmA&autoplay=1&mute=1',
       streamCheckMs: 30000,
-      hardRefreshMs: 15 * 60 * 1000,
       serviceWindows: [
         { day: 0, start: '10:15', end: '11:45', label: 'Worship Service' }
       ]
@@ -381,10 +350,8 @@
       welcomeFrame: document.getElementById('welcomeFrame'),
       liveFrame: document.getElementById('liveFrame'),
       liveShell: document.getElementById('liveShell'),
-      statusPill: document.getElementById('statusPill'),
-      statusText: document.getElementById('statusText'),
       footerMessage: document.getElementById('footerMessage'),
-      refreshStatus: document.getElementById('refreshStatus'),
+      modeTag: document.getElementById('modeTag'),
       clockTime: document.getElementById('clockTime'),
       clockDate: document.getElementById('clockDate'),
       countdown: document.getElementById('countdown'),
@@ -470,7 +437,6 @@
       const [month, day, year] = tzDateString.split('/').map(Number);
       const base = new Date(year, month - 1, day);
       base.setDate(base.getDate() + (nextWindow.daysAway || 0));
-
       const [hours, minutes] = nextWindow.start.split(':').map(Number);
       base.setHours(hours, minutes, 0, 0);
       return base;
@@ -481,10 +447,11 @@
       els.countdown.innerHTML = '';
 
       if (currentWindow) {
-        els.heroSubtitle.textContent = `${currentWindow.label} is currently within the scheduled service window.`;
+        els.heroSubtitle.textContent = 'Service In Progress';
         return;
       }
 
+      els.heroSubtitle.textContent = 'Next Service Starts In';
       const nextDate = getNextWindowDate(nextWindow, new Date());
       if (!nextDate) return;
 
@@ -509,8 +476,6 @@
         div.innerHTML = `<strong>${String(value).padStart(2, '0')}</strong><span>${label}</span>`;
         els.countdown.appendChild(div);
       }
-
-      els.heroSubtitle.textContent = `Counting down to ${nextWindow.label}. During service, the large Weekly Feed frame can switch over to the YouTube live feed automatically.`;
     }
 
     function updateClock() {
@@ -523,34 +488,23 @@
       });
     }
 
-    function setStatus(mode, label, text) {
-      els.statusPill.className = 'status-pill ' + mode;
-      els.statusPill.textContent = label;
-      els.statusText.textContent = text;
-    }
-
-    function setLiveMode(isLive, label = 'Worship Service') {
+    function setLiveMode(isLive) {
       if (isLive) {
         els.liveShell.classList.add('active');
         els.liveFrame.src = CONFIG.youtubeEmbedUrl;
-        setStatus('live', 'LIVE NOW', `${label} is currently live in the large display frame.`);
-        els.footerMessage.textContent = 'YouTube Live is active in the large Weekly Feed frame.';
+        els.footerMessage.textContent = 'YouTube Live is active in the large display frame.';
+        els.modeTag.textContent = 'LIVE NOW';
       } else {
         els.liveShell.classList.remove('active');
         els.liveFrame.src = 'about:blank';
-        const { nextWindow } = getScheduleStatus(new Date());
-        if (nextWindow) {
-          setStatus('upcoming', 'Up Next', `${nextWindow.label} is the next scheduled worship window.`);
-        } else {
-          setStatus('offline', 'Display Mode', 'Weekly Feed is visible until service begins.');
-        }
         els.footerMessage.textContent = 'Announcements, highlights, and ways to connect.';
+        els.modeTag.textContent = 'Weekly Feed';
       }
     }
 
     function checkLiveWindow() {
       const { currentWindow } = getScheduleStatus(new Date());
-      setLiveMode(!!currentWindow, currentWindow?.label || 'Worship Service');
+      setLiveMode(!!currentWindow);
     }
 
     function init() {
@@ -566,11 +520,6 @@
       }, 1000);
 
       setInterval(checkLiveWindow, CONFIG.streamCheckMs);
-
-      setInterval(() => {
-        els.refreshStatus.textContent = 'Refreshing browser';
-        window.location.reload();
-      }, CONFIG.hardRefreshMs);
     }
 
     init();
