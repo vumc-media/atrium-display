@@ -1,24 +1,37 @@
-name: Build Atrium Page
+name: Build Atrium Overlay
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: "15 5 * * *"
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Build
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build index.html
         env:
           ICS_URL: ${{ secrets.ICS_URL }}
-        run: node build.js
-      - name: Commit built index.html
+        run: npm run build
+
+      - name: Commit generated page
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add index.html
-          git commit -m "Build" || echo "No changes"
+          git commit -m "Build Atrium overlay" || echo "No changes"
           git push
