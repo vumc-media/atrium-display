@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,7 +45,7 @@
       min-height: 720px;
       padding: 16px;
       display: grid;
-      grid-template-columns: 20% 22% 1fr;
+      grid-template-columns: 42% 1fr;
       grid-template-rows: 1fr 116px 42px;
       gap: 12px 14px;
       background:
@@ -62,9 +63,9 @@
     /* LEFT STACK */
     .left-stack {
       grid-column: 1;
-      grid-row: 1 / 4;
+      grid-row: auto;
       display: grid;
-      grid-template-rows: auto 1fr;
+      grid-template-rows: auto auto 1fr;
       gap: 14px;
       min-height: 0;
     }
@@ -114,10 +115,34 @@
     }
 
     .service-label {
-      margin-top: 12px;
+      margin-top: 8px;
       color: var(--muted);
-      font-size: clamp(16px, 1.18vw, 24px);
+      font-size: clamp(13px, .92vw, 18px);
       font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .welcome-meta {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .welcome-clock {
+      font-size: clamp(24px, 2vw, 38px);
+      line-height: 1;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .welcome-date {
+      color: var(--muted);
+      font-size: clamp(12px, .82vw, 16px);
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
     }
 
     .countdown {
@@ -153,21 +178,14 @@
     }
 
     .slideshow-panel {
-      padding: 18px;
+      padding: 10px;
       min-height: 0;
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-    }
-
-    .slideshow-panel h2 {
-      font-size: clamp(22px, 1.55vw, 31px);
-      margin: 0 0 14px;
-      line-height: 1.1;
     }
 
     .frame {
       position: relative;
-      min-height: 0;
+      width: 100%;
+      aspect-ratio: 16 / 9;
       overflow: hidden;
       border-radius: 15px;
       background: #c8092d;
@@ -184,11 +202,11 @@
 
     /* WEEKLY */
     .weekly-panel {
-      grid-column: 2;
+      grid-column: 1;
       grid-row: 1 / 4;
       min-height: 0;
       display: grid;
-      grid-template-rows: 1fr 100px;
+      grid-template-rows: 1fr;
       overflow: hidden;
       border-radius: var(--radius);
     }
@@ -206,10 +224,10 @@
       This keeps event names and times closer together and greatly reduces wrapping.
     */
     .weekly-viewport iframe {
-      width: 111.12%;
-      height: 111.12%;
+      width: 100%;
+      height: 100%;
       border: 0;
-      transform: scale(.90);
+      transform: none;
       transform-origin: top left;
       background: transparent;
     }
@@ -239,7 +257,7 @@
 
     /* VIDEO REGION */
     .video-window {
-      grid-column: 3;
+      grid-column: 2;
       grid-row: 1;
       position: relative;
       min-height: 0;
@@ -277,7 +295,7 @@
 
     /* QR LOWER THIRD */
     .qr-bar {
-      grid-column: 3;
+      grid-column: 2;
       grid-row: 2;
       display: grid;
       grid-template-columns: 116px 1fr;
@@ -326,7 +344,7 @@
     }
 
     .ticker {
-      grid-column: 3;
+      grid-column: 2;
       grid-row: 3;
       border: 1px solid rgba(255,255,255,0.8);
       background: linear-gradient(180deg, #4b4b4b, #262626);
@@ -349,11 +367,6 @@
       to { transform: translateX(-100%); }
     }
 
-    @media (max-aspect-ratio: 4/3) {
-      .canvas {
-        grid-template-columns: 22% 24% 1fr;
-      }
-    }
   </style>
 </head>
 <body>
@@ -370,6 +383,11 @@
 
         <div class="service-label">
           Next Service: <span id="serviceName">Traditional Worship</span>
+        </div>
+
+        <div class="welcome-meta">
+          <div class="welcome-clock" id="welcomeClock">--:-- --</div>
+          <div class="welcome-date" id="welcomeDate">Loading date…</div>
         </div>
 
         <div class="countdown" aria-label="Countdown to the next service">
@@ -393,8 +411,6 @@
       </article>
 
       <article class="panel slideshow-panel">
-        <div class="eyebrow">Welcome Center</div>
-        <h2>Welcome Center Feed</h2>
         <div class="frame">
           <iframe
             src="https://welcome-center.netlify.app/"
@@ -404,8 +420,7 @@
         </div>
       </article>
 
-    </section>
-
+      
     <section class="panel weekly-panel">
       <div class="weekly-viewport">
         <iframe
@@ -414,11 +429,8 @@
           loading="eager">
         </iframe>
       </div>
+    </section>
 
-      <div class="weekly-time">
-        <strong id="weeklyClock">--:-- --</strong>
-        <span id="weeklyDate">Loading date…</span>
-      </div>
     </section>
 
     <section class="video-window" aria-label="Transparent video area">
@@ -507,8 +519,8 @@
         year: "numeric"
       });
 
-      document.getElementById("weeklyClock").textContent = time;
-      document.getElementById("weeklyDate").textContent = date;
+      document.getElementById("welcomeClock").textContent = time;
+      document.getElementById("welcomeDate").textContent = date;
     }
 
     const params = new URLSearchParams(location.search);
