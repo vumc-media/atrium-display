@@ -84,20 +84,20 @@
       margin-bottom: 12px;
     }
 
-    .welcome-date {
-      margin: 0 0 3px;
-      color: var(--muted);
-      font-size: clamp(13px, .86vw, 17px);
-      font-weight: 800;
+    .datetime-line {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin: 0;
+      font-size: clamp(20px, 1.55vw, 30px);
+      line-height: 1.1;
+      font-weight: 850;
       white-space: nowrap;
     }
 
-    .welcome-time {
-      margin: 0;
-      font-size: clamp(29px, 2.55vw, 48px);
-      line-height: 1;
-      font-weight: 900;
-      white-space: nowrap;
+    .datetime-separator {
+      color: var(--muted);
+      font-weight: 700;
     }
 
     .service-label {
@@ -365,8 +365,11 @@
   <main class="canvas">
     <section class="left-stack">
       <article class="panel welcome-card">
-        <div class="welcome-date" id="welcomeDate">Loading date…</div>
-        <div class="welcome-time" id="welcomeClock">--:-- --</div>
+        <div class="datetime-line">
+          <span id="welcomeDate">Loading date…</span>
+          <span class="datetime-separator">•</span>
+          <span id="welcomeClock">--:-- --</span>
+        </div>
 
         <div class="service-label">
           Next Event: <span id="serviceName">Traditional Worship</span>
