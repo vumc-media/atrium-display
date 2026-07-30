@@ -3,68 +3,259 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VUMC Atrium Display</title>
+<title>Versailles UMC | Atrium Display</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div class="layout">
 
-<aside class="sidebar">
-  <section class="card">
-    <h2>Welcome to Versailles UMC</h2>
-    <div class="countdown">Next Service<br><strong>00d 00h 00m</strong></div>
-  </section>
+<div id="dashboard">
 
-  <section class="card welcome-center">
-    <h3>Welcome Center</h3>
-    <iframe src="https://welcome-center.netlify.app/"></iframe>
-  </section>
+    <!-- ===========================
+         LEFT SIDEBAR
+    ============================ -->
 
-  <section class="card footer-card">
-    <div id="clock">9:30 AM</div>
-    <div id="weather">74°F • Sunny</div>
-  </section>
-</aside>
+    <aside id="sidebar">
 
-<main class="content">
-  <header class="header">
-    <h1>Versailles United Methodist Church</h1>
-  </header>
+        <section class="card welcome-card">
+            <h1>Welcome!</h1>
+            <p>
+                We're glad you're here.
+            </p>
+        </section>
 
-  <section class="video-wrap">
-    <div class="video-hole"></div>
-  </section>
 
-  <section class="card weekly">
-    <h2>This Week at VUMC</h2>
+        <section class="card countdown-card">
 
-    <div class="day">Monday • August 3</div>
+            <div class="section-title">
+                NEXT SERVICE
+            </div>
 
-    <div class="event">
-      <span class="title">Traditional Worship</span>
-      <span class="time">9:30 AM</span>
-    </div>
+            <div id="countdown">
+                00 : 00 : 00
+            </div>
 
-    <div class="event">
-      <span class="title">Contemporary Worship</span>
-      <span class="time">10:30 AM</span>
-    </div>
+        </section>
 
-    <div class="event">
-      <span class="title">Rooted Youth</span>
-      <span class="time">4:00 PM</span>
-    </div>
 
-  </section>
-</main>
+        <section class="card welcome-center-card">
 
-<footer class="bottom">
-<div class="qr">QR</div>
-<div class="churchcenter">Church Center</div>
-<div class="ticker"><marquee>Welcome • Grow • Serve • Love God • Love People</marquee></div>
-</footer>
+            <div class="section-title">
+                WELCOME CENTER
+            </div>
+
+            <iframe
+                src="https://welcome-center.netlify.app/"
+                loading="lazy">
+            </iframe>
+
+        </section>
+
+
+        <section class="card info-card">
+
+            <div id="clock">
+                9:30 AM
+            </div>
+
+            <div id="date">
+                Sunday, August 2
+            </div>
+
+            <div id="weather">
+                74°
+                <span>Sunny</span>
+            </div>
+
+        </section>
+
+    </aside>
+
+
+    <!-- ===========================
+         MAIN CONTENT
+    ============================ -->
+
+    <main id="main">
+
+        <header id="header">
+
+            <div class="logo-area">
+
+                <h2>
+                    Versailles United Methodist Church
+                </h2>
+
+                <span>
+                    Loving God • Loving People • Making Disciples
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- ===================
+             VIDEO AREA
+        ==================== -->
+
+        <section id="video-section">
+
+            <div id="video-window">
+
+                <!--
+                Transparent opening.
+
+                vMix places the browser underneath this.
+                -->
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ===================
+             WEEKLY EVENTS
+        ==================== -->
+
+        <section class="card weekly-card">
+
+            <div class="weekly-header">
+
+                <h2>
+                    This Week at Versailles UMC
+                </h2>
+
+            </div>
+
+
+
+            <div class="day-group">
+
+                <div class="day-title">
+                    Monday
+                </div>
+
+                <div class="event-row">
+
+                    <div class="event-name">
+                        Traditional Worship
+                    </div>
+
+                    <div class="event-time">
+                        9:30 AM
+                    </div>
+
+                </div>
+
+                <div class="event-row">
+
+                    <div class="event-name">
+                        Contemporary Worship
+                    </div>
+
+                    <div class="event-time">
+                        10:30 AM
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="day-group">
+
+                <div class="day-title">
+                    Tuesday
+                </div>
+
+                <div class="event-row">
+
+                    <div class="event-name">
+                        Bible Study
+                    </div>
+
+                    <div class="event-time">
+                        6:30 PM
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="day-group">
+
+                <div class="day-title">
+                    Wednesday
+                </div>
+
+                <div class="event-row">
+
+                    <div class="event-name">
+                        Rooted Youth
+                    </div>
+
+                    <div class="event-time">
+                        4:00 PM
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ===========================
+         BOTTOM BAR
+    ============================ -->
+
+    <footer id="footer">
+
+        <section class="card qr-card">
+
+            QR CODE
+
+        </section>
+
+
+        <section class="card church-center-card">
+
+            Church Center
+
+        </section>
+
+
+        <section class="card ticker-card">
+
+            <div id="ticker">
+
+                Welcome to Versailles United Methodist Church •
+                Join us Sunday at 9:30 & 10:30 •
+                Download Church Center •
+                Visit the Welcome Center •
+                Have a blessed week!
+
+            </div>
+
+        </section>
+
+    </footer>
 
 </div>
+
 <script src="app.js"></script>
+
 </body>
 </html>
