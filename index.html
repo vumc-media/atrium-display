@@ -1,25 +1,528 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atrium Display</title>
+  <style>
+    :root {
+      --bg1: #08111d;
+      --bg2: #0c1930;
+      --panel: #14233a;
+      --panel2: #1b2f4c;
+      --border: rgba(255,255,255,0.14);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.78);
+      --gold: #d8b15a;
+      --live: #d54848;
+      --radius: 18px;
+      --shadow: 0 12px 28px rgba(0,0,0,0.28);
+    }
 
-<style>
+    * { box-sizing: border-box; }
 
-/* ALL CSS HERE */
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+    }
 
-</style>
+    .shell {
+      width: 100%;
+      height: 100%;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 18px;
+    }
 
+    .left-column,
+    .right-column {
+      min-height: 0;
+      display: grid;
+      gap: 18px;
+    }
+
+    .left-column {
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .right-column {
+      grid-template-rows: 1fr auto;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 0;
+      position: relative;
+    }
+
+    .hero-card {
+      padding: 22px;
+      background: linear-gradient(135deg, #22344f 0%, #1b2d47 60%, #243754 100%);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .brand-row img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+
+    .brand-row span {
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      font-size: 1rem;
+    }
+
+    .eyebrow {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 2.15rem;
+      line-height: 1.02;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .countdown {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .countbox {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      text-align: center;
+      padding: 12px 8px;
+    }
+
+    .countbox strong {
+      display: block;
+      font-size: 1.6rem;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .countbox span {
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .welcome-card {
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      background: linear-gradient(180deg, #182a45 0%, #13233a 100%);
+    }
+
+    .panel-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .frame-wrap {
+      min-height: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #0b1322;
+      height: 100%;
+    }
+
+    .frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #0b1322;
+    }
+
+    .clock-card {
+      padding: 18px 20px;
+      background: linear-gradient(180deg, #1b304f 0%, #13233a 100%);
+    }
+
+    .clock-time {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .clock-date {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .main-stage {
+      position: relative;
+      min-height: 0;
+      background: #0b1322;
+    }
+
+    .weekly-shell,
+    .live-shell {
+      position: absolute;
+      inset: 0;
+    }
+
+    .live-shell {
+      display: none;
+      background: #000;
+    }
+
+    .live-shell.active {
+      display: block;
+    }
+
+    .live-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 4;
+      background: var(--live);
+      color: #fff;
+      font-size: 0.92rem;
+      font-weight: 800;
+      padding: 7px 11px;
+      border-radius: 10px;
+    }
+
+    .yt-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 4;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 0.92rem;
+      font-weight: 800;
+      padding: 7px 11px;
+      border-radius: 10px;
+    }
+
+    .footer-strip {
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      background: linear-gradient(180deg, #22344f 0%, #1a2d49 100%);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1200px) {
+      .shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .left-column {
+        grid-template-rows: auto auto auto;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="shell">
+    <div class="left-column">
+      <section class="card hero-card">
+        <div class="brand-row">
+          <img src="https://yt3.googleusercontent.com/0VzY1FMygvH9BmYV_gu_hNyZsW1kY5VPDdeRtHxyzfcXtqM5Rc6Kongrr_dw3v5I_hwJv63vIQ=s900-c-k-c0x00ffffff-no-rj" alt="VUMC Logo" />
+          <span>VERSAILLES UMC</span>
+        </div>
+        <div class="eyebrow">Atrium Display</div>
+        <h1 class="title">Welcome to Versailles UMC</h1>
+        <div class="subtitle" id="heroSubtitle">Next Service Starts In</div>
+        <div class="countdown" id="countdown"></div>
+      </section>
 
-<!-- ALL HTML HERE -->
+      <section class="card welcome-card">
+        <div>
+          <div class="panel-label">Welcome Center</div>
+          <h2 class="panel-title">Welcome Center Feed</h2>
+        </div>
+        <div class="frame-wrap">
+          <iframe id="welcomeFrame" class="frame" title="Welcome Center Feed"></iframe>
+        </div>
+      </section>
 
-<script>
+      <section class="card clock-card">
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate">Loading date...</div>
+      </section>
+    </div>
 
-/* ALL JAVASCRIPT HERE */
+    <div class="right-column">
+      <section class="card main-stage">
+        <div class="weekly-shell">
+          <iframe id="weeklyFrame" class="frame" title="Weekly Feed"></iframe>
+        </div>
 
-</script>
+        <div class="live-shell" id="liveShell">
+          <iframe id="liveFrame" class="frame" title="YouTube Live Feed" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+          <div class="live-badge">● LIVE</div>
+          <div class="yt-badge">YouTube</div>
+        </div>
+      </section>
 
+      <section class="card footer-strip">
+        <div id="footerMessage">Announcements, highlights, and ways to connect.</div>
+        <div class="tag" id="modeTag">Weekly Feed</div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      timezone: 'America/New_York',
+      weeklyFeedUrl: 'https://vumc-weekly-feed.netlify.app/',
+      welcomeCenterUrl: 'https://welcome-center.netlify.app/',
+      youtubeEmbedUrl: 'https://www.youtube.com/embed/live_stream?channel=UC_svgodM3blLqWEBQ5yNjmA&autoplay=1&mute=1',
+      streamCheckMs: 30000,
+      serviceWindows: [
+        { day: 0, start: '10:15', end: '11:45', label: 'Worship Service' }
+      ]
+    };
+
+    const els = {
+      weeklyFrame: document.getElementById('weeklyFrame'),
+      welcomeFrame: document.getElementById('welcomeFrame'),
+      liveFrame: document.getElementById('liveFrame'),
+      liveShell: document.getElementById('liveShell'),
+      footerMessage: document.getElementById('footerMessage'),
+      modeTag: document.getElementById('modeTag'),
+      clockTime: document.getElementById('clockTime'),
+      clockDate: document.getElementById('clockDate'),
+      countdown: document.getElementById('countdown'),
+      heroSubtitle: document.getElementById('heroSubtitle')
+    };
+
+    function formatInTimeZone(date, options) {
+      return new Intl.DateTimeFormat('en-US', { timeZone: CONFIG.timezone, ...options }).format(date);
+    }
+
+    function getPartsInTimeZone(date = new Date()) {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: CONFIG.timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        weekday: 'short'
+      });
+
+      const parts = formatter.formatToParts(date);
+      const map = {};
+      for (const p of parts) {
+        if (p.type !== 'literal') map[p.type] = p.value;
+      }
+      return map;
+    }
+
+    function weekdayToIndex(shortWeekday) {
+      return { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[shortWeekday];
+    }
+
+    function minutesFromTimeString(value) {
+      const [h, m] = value.split(':').map(Number);
+      return (h * 60) + m;
+    }
+
+    function getScheduleStatus(now = new Date()) {
+      const parts = getPartsInTimeZone(now);
+      const currentWeekday = weekdayToIndex(parts.weekday);
+      const currentMinutes = (Number(parts.hour) * 60) + Number(parts.minute);
+
+      let currentWindow = null;
+      let nextWindow = null;
+
+      for (const win of CONFIG.serviceWindows) {
+        const startMin = minutesFromTimeString(win.start);
+        const endMin = minutesFromTimeString(win.end);
+        if (win.day === currentWeekday && currentMinutes >= startMin && currentMinutes < endMin) {
+          currentWindow = win;
+        }
+      }
+
+      if (!currentWindow) {
+        for (let offset = 0; offset < 8; offset++) {
+          const checkDay = (currentWeekday + offset) % 7;
+          const candidates = CONFIG.serviceWindows
+            .filter(win => win.day === checkDay)
+            .sort((a, b) => minutesFromTimeString(a.start) - minutesFromTimeString(b.start));
+
+          for (const candidate of candidates) {
+            const startMin = minutesFromTimeString(candidate.start);
+            if (offset > 0 || startMin > currentMinutes) {
+              nextWindow = { ...candidate, daysAway: offset };
+              return { currentWindow: null, nextWindow };
+            }
+          }
+        }
+      }
+
+      return { currentWindow, nextWindow };
+    }
+
+    function getNextWindowDate(nextWindow, now = new Date()) {
+      if (!nextWindow) return null;
+
+      const tzDateString = formatInTimeZone(now, {
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      });
+      const [month, day, year] = tzDateString.split('/').map(Number);
+      const base = new Date(year, month - 1, day);
+      base.setDate(base.getDate() + (nextWindow.daysAway || 0));
+      const [hours, minutes] = nextWindow.start.split(':').map(Number);
+      base.setHours(hours, minutes, 0, 0);
+      return base;
+    }
+
+    function updateCountdown() {
+      const { currentWindow, nextWindow } = getScheduleStatus(new Date());
+      els.countdown.innerHTML = '';
+
+      if (currentWindow) {
+        els.heroSubtitle.textContent = 'Service In Progress';
+        return;
+      }
+
+      els.heroSubtitle.textContent = 'Next Service Starts In';
+      const nextDate = getNextWindowDate(nextWindow, new Date());
+      if (!nextDate) return;
+
+      const diff = nextDate.getTime() - Date.now();
+      if (diff <= 0) return;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      const parts = [
+        ['Days', days],
+        ['Hours', hours],
+        ['Minutes', minutes],
+        ['Seconds', seconds]
+      ];
+
+      for (const [label, value] of parts) {
+        const div = document.createElement('div');
+        div.className = 'countbox';
+        div.innerHTML = `<strong>${String(value).padStart(2, '0')}</strong><span>${label}</span>`;
+        els.countdown.appendChild(div);
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      els.clockTime.textContent = formatInTimeZone(now, {
+        hour: 'numeric', minute: '2-digit', hour12: true
+      });
+      els.clockDate.textContent = formatInTimeZone(now, {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+      });
+    }
+
+    function setLiveMode(isLive) {
+      if (isLive) {
+        els.liveShell.classList.add('active');
+        els.liveFrame.src = CONFIG.youtubeEmbedUrl;
+        els.footerMessage.textContent = 'YouTube Live is active in the large display frame.';
+        els.modeTag.textContent = 'LIVE NOW';
+      } else {
+        els.liveShell.classList.remove('active');
+        els.liveFrame.src = 'about:blank';
+        els.footerMessage.textContent = 'Announcements, highlights, and ways to connect.';
+        els.modeTag.textContent = 'Weekly Feed';
+      }
+    }
+
+    function checkLiveWindow() {
+      const { currentWindow } = getScheduleStatus(new Date());
+      setLiveMode(!!currentWindow);
+    }
+
+    function init() {
+      els.weeklyFrame.src = CONFIG.weeklyFeedUrl;
+      els.welcomeFrame.src = CONFIG.welcomeCenterUrl;
+      updateClock();
+      updateCountdown();
+      checkLiveWindow();
+
+      setInterval(() => {
+        updateClock();
+        updateCountdown();
+      }, 1000);
+
+      setInterval(checkLiveWindow, CONFIG.streamCheckMs);
+    }
+
+    init();
+  </script>
 </body>
 </html>
