@@ -2,48 +2,68 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VUMC Atrium Display 2.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VUMC Atrium Display</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="stage">
-  <aside class="left">
-    <div class="card hero">
-      <h2>Welcome to Versailles UMC</h2>
-      <p>Countdown to next service</p>
-      <div id="countdown">03 Days • 02 Hours • 14 Minutes</div>
+<div class="layout">
+
+<aside class="sidebar">
+  <section class="card">
+    <h2>Welcome to Versailles UMC</h2>
+    <div class="countdown">Next Service<br><strong>00d 00h 00m</strong></div>
+  </section>
+
+  <section class="card welcome-center">
+    <h3>Welcome Center</h3>
+    <iframe src="https://welcome-center.netlify.app/"></iframe>
+  </section>
+
+  <section class="card footer-card">
+    <div id="clock">9:30 AM</div>
+    <div id="weather">74°F • Sunny</div>
+  </section>
+</aside>
+
+<main class="content">
+  <header class="header">
+    <h1>Versailles United Methodist Church</h1>
+  </header>
+
+  <section class="video-wrap">
+    <div class="video-hole"></div>
+  </section>
+
+  <section class="card weekly">
+    <h2>This Week at VUMC</h2>
+
+    <div class="day">Monday • August 3</div>
+
+    <div class="event">
+      <span class="title">Traditional Worship</span>
+      <span class="time">9:30 AM</span>
     </div>
-    <div class="card iframe">
-      <h3>Welcome Center</h3>
-      <iframe src="https://welcome-center.netlify.app/"></iframe>
+
+    <div class="event">
+      <span class="title">Contemporary Worship</span>
+      <span class="time">10:30 AM</span>
     </div>
-    <div class="card footerinfo">
-      <div id="clock">9:30 AM</div>
-      <div id="weather">74°F • Sunny</div>
+
+    <div class="event">
+      <span class="title">Rooted Youth</span>
+      <span class="time">4:00 PM</span>
     </div>
-  </aside>
 
-  <main class="right">
-    <header class="card header">
-      <h1>Versailles United Methodist Church</h1>
-      <span class="live">● LIVE</span>
-    </header>
+  </section>
+</main>
 
-    <section class="video card">
-      <div class="label">Sanctuary Live (transparent opening for vMix)</div>
-    </section>
+<footer class="bottom">
+<div class="qr">QR</div>
+<div class="churchcenter">Church Center</div>
+<div class="ticker"><marquee>Welcome • Grow • Serve • Love God • Love People</marquee></div>
+</footer>
 
-    <section class="weekly card">
-      <h3>This Week at VUMC</h3>
-      <iframe src="https://weekly.versaillesumc.org/"></iframe>
-    </section>
-  </main>
-
-  <footer class="bottom">
-    <div class="qr card">QR / Church Center</div>
-    <div class="ticker card"><marquee>Announcements • Prayer Night • Rooted Youth • Cornerstones • Welcome!</marquee></div>
-  </footer>
 </div>
 <script src="app.js"></script>
 </body>

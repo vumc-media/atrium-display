@@ -1,13 +1,54 @@
-html,body{margin:0;background:#081321;color:#fff;font-family:Arial;height:100%;overflow:hidden}
-#stage{width:1920px;height:1080px;margin:0 auto;padding:18px;display:grid;grid-template-columns:390px 1fr;grid-template-rows:1fr 110px;gap:14px}
-.left{display:grid;grid-template-rows:260px 1fr 120px;gap:14px}
-.right{display:grid;grid-template-rows:110px 560px 1fr;gap:14px}
-.card{background:#13263f;border-radius:18px;padding:16px;overflow:hidden}
-iframe{width:100%;height:100%;border:0;background:white}
-.video{background:transparent;border:2px solid rgba(255,255,255,.4);position:relative}
-.label{position:absolute;left:15px;bottom:15px;background:#000a;padding:8px 12px;border-radius:8px}
-.header{display:flex;justify-content:space-between;align-items:center}
-.live{background:#c22;padding:8px 14px;border-radius:20px;font-weight:bold}
-.bottom{grid-column:1/-1;display:grid;grid-template-columns:420px 1fr;gap:14px}
-.qr{display:flex;align-items:center;justify-content:center;font-size:28px}
-.ticker{display:flex;align-items:center}
+
+*{box-sizing:border-box}
+body{margin:0;background:#071728;color:white;font-family:Arial,Helvetica,sans-serif}
+.layout{
+width:1920px;height:1080px;
+padding:18px;
+display:grid;
+grid-template-columns:340px 1fr;
+grid-template-rows:1fr 90px;
+gap:18px;
+}
+.sidebar{display:grid;grid-template-rows:240px 1fr 110px;gap:18px}
+.content{display:grid;grid-template-rows:80px 430px 1fr;gap:18px}
+.card{background:#112842;border-radius:18px;padding:14px}
+.header{display:flex;align-items:center;padding:0 12px}
+.video-wrap{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.video-hole{
+width:1120px;
+aspect-ratio:16/9;
+border:2px solid rgba(255,255,255,.35);
+border-radius:12px;
+background:transparent;
+}
+iframe{width:100%;height:100%;border:0;border-radius:10px}
+.welcome-center{padding-bottom:14px}
+.welcome-center iframe{height:100%}
+.weekly h2{margin-top:0;margin-bottom:10px}
+.day{font-weight:bold;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:6px}
+.event{
+display:flex;
+justify-content:flex-start;
+align-items:center;
+gap:22px;
+padding:8px 0;
+}
+.title{font-weight:600}
+.time{white-space:nowrap;font-weight:bold}
+.bottom{
+grid-column:1/-1;
+display:grid;
+grid-template-columns:180px 260px 1fr;
+gap:18px;
+}
+.qr,.churchcenter,.ticker{
+background:#112842;border-radius:18px;
+display:flex;align-items:center;justify-content:center;
+font-weight:bold;
+}
+#clock{font-size:34px;font-weight:bold}
+#weather{margin-top:10px}

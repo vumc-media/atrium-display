@@ -1,7 +1,6 @@
-function updateClock(){
-const now=new Date();
-document.getElementById('clock').textContent=
-now.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+function tick(){
+const d=new Date();
+document.getElementById('clock').textContent=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 }
-updateClock();
-setInterval(updateClock,1000);
+tick();
+setInterval(tick,1000);
