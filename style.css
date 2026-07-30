@@ -1,54 +1,483 @@
+/* =========================================================
+   Versailles UMC Atrium Display
+   style.css
+========================================================= */
 
-*{box-sizing:border-box}
-body{margin:0;background:#071728;color:white;font-family:Arial,Helvetica,sans-serif}
-.layout{
-width:1920px;height:1080px;
-padding:18px;
-display:grid;
-grid-template-columns:340px 1fr;
-grid-template-rows:1fr 90px;
-gap:18px;
+:root{
+
+    --bg:#081727;
+
+    --card:#10263d;
+
+    --card2:#183752;
+
+    --border:#2d5b86;
+
+    --accent:#4db6ff;
+
+    --text:#ffffff;
+
+    --muted:#bfcfe1;
+
+    --radius:18px;
+
+    --shadow:0 8px 24px rgba(0,0,0,.35);
+
+    --gap:20px;
+
+    --sidebar:360px;
+
+    --video-width:980px;
+
+    --video-border:2px;
+
 }
-.sidebar{display:grid;grid-template-rows:240px 1fr 110px;gap:18px}
-.content{display:grid;grid-template-rows:80px 430px 1fr;gap:18px}
-.card{background:#112842;border-radius:18px;padding:14px}
-.header{display:flex;align-items:center;padding:0 12px}
-.video-wrap{
-display:flex;
-justify-content:center;
-align-items:center;
+
+
+/* ========================================================= */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
 }
-.video-hole{
-width:1120px;
-aspect-ratio:16/9;
-border:2px solid rgba(255,255,255,.35);
-border-radius:12px;
-background:transparent;
+
+html{
+
+    width:100%;
+    height:100%;
+
 }
-iframe{width:100%;height:100%;border:0;border-radius:10px}
-.welcome-center{padding-bottom:14px}
-.welcome-center iframe{height:100%}
-.weekly h2{margin-top:0;margin-bottom:10px}
-.day{font-weight:bold;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:6px}
-.event{
-display:flex;
-justify-content:flex-start;
-align-items:center;
-gap:22px;
-padding:8px 0;
+
+body{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    background:linear-gradient(
+        180deg,
+        #0b2035,
+        #07111b);
+
+    color:var(--text);
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    Helvetica,
+    sans-serif;
+
 }
-.title{font-weight:600}
-.time{white-space:nowrap;font-weight:bold}
-.bottom{
-grid-column:1/-1;
-display:grid;
-grid-template-columns:180px 260px 1fr;
-gap:18px;
+
+
+/* ========================================================= */
+
+#dashboard{
+
+    width:1920px;
+    height:1080px;
+
+    margin:auto;
+
+    padding:20px;
+
+    display:grid;
+
+    grid-template-columns:
+        var(--sidebar)
+        1fr;
+
+    grid-template-rows:
+
+        1fr
+        90px;
+
+    gap:var(--gap);
+
 }
-.qr,.churchcenter,.ticker{
-background:#112842;border-radius:18px;
-display:flex;align-items:center;justify-content:center;
-font-weight:bold;
+
+
+/* ========================================================= */
+
+#sidebar{
+
+    display:grid;
+
+    grid-template-rows:
+
+        170px
+        150px
+        1fr
+        170px;
+
+    gap:20px;
+
 }
-#clock{font-size:34px;font-weight:bold}
-#weather{margin-top:10px}
+
+
+/* ========================================================= */
+
+#main{
+
+    display:grid;
+
+    grid-template-rows:
+
+        80px
+        430px
+        1fr;
+
+    gap:20px;
+
+}
+
+
+/* ========================================================= */
+
+.card{
+
+    background:linear-gradient(
+        180deg,
+        var(--card2),
+        var(--card));
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    border:1px solid rgba(255,255,255,.05);
+
+    padding:20px;
+
+}
+
+
+/* ========================================================= */
+
+#header{
+
+    display:flex;
+
+    align-items:center;
+
+    padding-left:10px;
+
+}
+
+.logo-area h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+}
+
+.logo-area span{
+
+    color:var(--muted);
+
+    display:block;
+
+    margin-top:4px;
+
+}
+
+
+/* ========================================================= */
+
+.section-title{
+
+    font-size:14px;
+
+    color:var(--accent);
+
+    letter-spacing:2px;
+
+    margin-bottom:14px;
+
+    font-weight:700;
+
+}
+
+
+/* ========================================================= */
+
+.welcome-card h1{
+
+    font-size:34px;
+
+    margin-bottom:10px;
+
+}
+
+.welcome-card p{
+
+    color:var(--muted);
+
+    line-height:1.6;
+
+}
+
+
+/* ========================================================= */
+
+#countdown{
+
+    font-size:48px;
+
+    font-weight:700;
+
+    text-align:center;
+
+    margin-top:22px;
+
+}
+
+
+/* ========================================================= */
+
+.welcome-center-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.welcome-center-card iframe{
+
+    flex:1;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:white;
+
+}
+
+
+/* ========================================================= */
+
+.info-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+}
+
+#clock{
+
+    font-size:44px;
+
+    font-weight:700;
+
+}
+
+#date{
+
+    margin-top:8px;
+
+    color:var(--muted);
+
+}
+
+#weather{
+
+    margin-top:16px;
+
+    font-size:30px;
+
+}
+
+
+/* ========================================================= */
+
+#video-section{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+#video-window{
+
+    width:var(--video-width);
+
+    aspect-ratio:16/9;
+
+    border:
+
+        var(--video-border)
+        dashed
+        rgba(255,255,255,.35);
+
+    border-radius:18px;
+
+}
+
+
+/* ========================================================= */
+
+.weekly-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.weekly-header{
+
+    margin-bottom:18px;
+
+}
+
+.weekly-header h2{
+
+    font-size:30px;
+
+}
+
+
+/* ========================================================= */
+
+.day-group{
+
+    margin-bottom:22px;
+
+}
+
+.day-title{
+
+    color:var(--accent);
+
+    font-size:18px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+
+/* ========================================================= */
+/* THIS fixes the huge gap you hated                      */
+/* ========================================================= */
+
+.event-row{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    gap:18px;
+
+    padding:8px 0;
+
+}
+
+.event-name{
+
+    flex:0 0 auto;
+
+    font-size:24px;
+
+    font-weight:600;
+
+}
+
+.event-time{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#89d0ff;
+
+}
+
+
+/* ========================================================= */
+
+#footer{
+
+    grid-column:1/-1;
+
+    display:grid;
+
+    grid-template-columns:
+
+        180px
+        260px
+        1fr;
+
+    gap:20px;
+
+}
+
+.qr-card,
+.church-center-card{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+.ticker-card{
+
+    display:flex;
+
+    align-items:center;
+
+    overflow:hidden;
+
+}
+
+#ticker{
+
+    white-space:nowrap;
+
+    animation:ticker 30s linear infinite;
+
+    font-size:24px;
+
+}
+
+
+/* ========================================================= */
+
+@keyframes ticker{
+
+    from{
+
+        transform:translateX(100%);
+
+    }
+
+    to{
+
+        transform:translateX(-100%);
+
+    }
+
+}
