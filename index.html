@@ -799,7 +799,557 @@ HTML
 
 And the more I  think about it, I  think church logo along with Welcome to our church needs to be above video frame. Having that at the top and the QR code at the bottom will frame the video frame more 16:9. So move logo and Church Name as a header above video frame. In the top left module in this order, Date, Time. Next line: Next Event instead of next service.
 
+Done. The layout now keeps:
 
-Analyzing
+Church logo and “Welcome to Versailles UMC” as the header above the video
+
+QR bar beneath the video
+
+Top-left module ordered as:
+
+Date
+
+Time
+
+Next Event
+
+Countdown
+
+atrium-display-framed-video-v6.html 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Versailles UMC Atrium Display</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #142844;
+      --panel-2: #1c3557;
+      --border: rgba(157, 188, 225, 0.33);
+      --text: #ffffff;
+      --muted: #d7e0eb;
+      --gold: #f6c453;
+      --red: #a40d0d;
+      --blue: #101fb2;
+      --gap: 16px;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+    }
+
+    body {
+      background: var(--bg);
+    }
+
+    .canvas {
+      width: 100vw;
+      height: 100vh;
+      min-width: 1280px;
+      min-height: 720px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 38% 1fr;
+      grid-template-rows: 1fr 116px 42px;
+      gap: 12px 16px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(39, 73, 116, 0.16), transparent 38%),
+        linear-gradient(180deg, #07111f 0%, #081421 100%);
+    }
+
+    .panel {
+      background: linear-gradient(145deg, rgba(27, 54, 89, 0.96), rgba(14, 34, 59, 0.98));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    /* LEFT STACK */
+    .left-stack {
+      grid-column: 1;
+      grid-row: 1 / 4;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .welcome-card {
+      padding: 18px 20px;
+    }
+
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: clamp(15px, 1.05vw, 22px);
+      font-weight: 900;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .welcome-date {
+      margin: 0 0 5px;
+      color: var(--muted);
+      font-size: clamp(15px, 1vw, 20px);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .welcome-time {
+      margin: 0;
+      font-size: clamp(34px, 3vw, 56px);
+      line-height: 1;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .service-label {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: clamp(13px, .92vw, 18px);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .count-box {
+      min-width: 0;
+      text-align: center;
+      padding: 14px 5px 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+    }
+
+    .count-value {
+      font-size: clamp(25px, 2.15vw, 43px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .count-label {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: clamp(10px, .77vw, 15px);
+      font-weight: 800;
+      letter-spacing: .03em;
+      white-space: nowrap;
+    }
+
+    .slideshow-panel {
+      padding: 10px;
+      min-height: 0;
+    }
+
+    .frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 15px;
+      background: #c8092d;
+    }
+
+    .frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: transparent;
+    }
+
+
+    /* WEEKLY */
+    .weekly-panel {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 1fr;
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+
+
+    .weekly-viewport {
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+      background: linear-gradient(145deg, rgba(27, 54, 89, 0.98), rgba(14, 34, 59, 0.99));
+    }
+
+    /*
+      The iframe receives a wider virtual viewport and is scaled back down.
+      This keeps event names and times closer together and greatly reduces wrapping.
+    */
+    .weekly-viewport iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      transform: none;
+      transform-origin: top left;
+      background: transparent;
+    }
+
+    .weekly-time {
+      border-top: 1px solid rgba(255,255,255,0.18);
+      padding: 13px 19px;
+      background: rgba(9, 26, 47, 0.96);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .weekly-time strong {
+      font-size: clamp(27px, 2vw, 40px);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .weekly-time span {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: clamp(13px, .9vw, 18px);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+
+    .right-stack {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      display: grid;
+      grid-template-rows: 92px minmax(0, 1fr) 116px 42px;
+      gap: 12px;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .video-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 22px;
+    }
+
+    .video-header .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.85);
+      background: white;
+      flex: 0 0 auto;
+    }
+
+    .video-header-text {
+      font-size: clamp(26px, 2.2vw, 44px);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    /* VIDEO REGION */
+    .video-window {
+      position: relative;
+      min-height: 0;
+      border-radius: 12px;
+      border: 1px solid rgba(170, 191, 216, 0.35);
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .video-window::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.12);
+      border-radius: inherit;
+    }
+
+    .debug-label {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: rgba(255,255,255,.45);
+      font-size: clamp(24px, 2vw, 42px);
+      line-height: 1.4;
+      background: linear-gradient(145deg, rgba(30,30,30,.7), rgba(12,12,12,.82));
+    }
+
+    body.debug .debug-label {
+      display: flex;
+    }
+
+    /* QR LOWER THIRD */
+    .qr-bar {
+      display: grid;
+      grid-template-columns: 116px 1fr;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.8);
+      background: white;
+    }
+
+    .qr-code {
+      width: 116px;
+      height: 116px;
+      object-fit: cover;
+      background: white;
+      padding: 5px;
+      border-right: 2px solid #ddd;
+    }
+
+    .qr-copy {
+      display: grid;
+      grid-template-rows: 40px 1fr;
+      min-width: 0;
+    }
+
+    .qr-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #1829c6, #09158f);
+      color: white;
+      font-size: clamp(18px, 1.25vw, 25px);
+      white-space: nowrap;
+      padding: 0 18px;
+    }
+
+    .qr-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      font-weight: 900;
+      font-size: clamp(28px, 2vw, 43px);
+      white-space: nowrap;
+      padding: 0 18px;
+      background: linear-gradient(180deg, #ffffff, #dedede);
+    }
+
+    .ticker {
+      border: 1px solid rgba(255,255,255,0.8);
+      background: linear-gradient(180deg, #4b4b4b, #262626);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: clamp(16px, 1.15vw, 23px);
+    }
+
+    .ticker-track {
+      display: inline-block;
+      min-width: max-content;
+      padding-left: 100%;
+      animation: ticker 28s linear infinite;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-100%); }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <section class="left-stack">
+      <article class="panel welcome-card">
+        <div class="welcome-date" id="welcomeDate">Loading date…</div>
+        <div class="welcome-time" id="welcomeClock">--:-- --</div>
+
+        <div class="service-label">
+          Next Event: <span id="serviceName">Traditional Worship</span>
+        </div>
+
+        <div class="countdown" aria-label="Countdown to the next service">
+          <div class="count-box">
+            <div class="count-value" id="days">00</div>
+            <span class="count-label">DAYS</span>
+          </div>
+          <div class="count-box">
+            <div class="count-value" id="hours">00</div>
+            <span class="count-label">HOURS</span>
+          </div>
+          <div class="count-box">
+            <div class="count-value" id="minutes">00</div>
+            <span class="count-label">MINUTES</span>
+          </div>
+          <div class="count-box">
+            <div class="count-value" id="seconds">00</div>
+            <span class="count-label">SECONDS</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel slideshow-panel">
+        <div class="frame">
+          <iframe
+            src="https://welcome-center.netlify.app/"
+            title="Versailles UMC Welcome Center"
+            loading="eager">
+          </iframe>
+        </div>
+      </article>
+
+      
+    <section class="panel weekly-panel">
+      <div class="weekly-viewport">
+        <iframe
+          src="https://weekly.versaillesumc.org/"
+          title="This Week at Versailles UMC"
+          loading="eager">
+        </iframe>
+      </div>
+    </section>
+
+    </section>
+
+    <section class="right-stack">
+      <header class="panel video-header">
+        <img class="logo" alt="Versailles UMC logo"
+          src="data:image/png;base64,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" />
+        <div class="video-header-text">Welcome to Versailles UMC</div>
+      </header>
+
+      <section class="video-window" aria-label="Transparent video area">
+      <div class="debug-label">
+        VIDEO INPUT<br />
+        <small>(vMix transparent layer)</small>
+      </div>
+    </section>
+
+    <section class="qr-bar">
+      <img
+        class="qr-code"
+        alt="Church Center QR code"
+        src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fversaillesumc.churchcenter.com%2F"
+      />
+      <div class="qr-copy">
+        <div class="qr-top">Download Church Center to Connect With Us</div>
+        <div class="qr-main">Scan the QR code to download</div>
+      </div>
+    </section>
+
+      <section class="ticker" aria-label="Church information ticker">
+        <div class="ticker-track" id="tickerText">
+          Welcome! • Join us Sunday at 9:30 &amp; 10:30 • Download Church Center • Visit the Welcome Center • Have a blessed week!
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const pad = value => String(value).padStart(2, "0");
+
+    function getNextService(now) {
+      const services = [
+        { day: 0, hour: 9, minute: 30, name: "Traditional Worship" },
+        { day: 0, hour: 10, minute: 30, name: "Contemporary Worship" }
+      ];
+
+      const candidates = [];
+
+      for (const service of services) {
+        const date = new Date(now);
+        const daysAhead = (service.day - now.getDay() + 7) % 7;
+        date.setDate(now.getDate() + daysAhead);
+        date.setHours(service.hour, service.minute, 0, 0);
+
+        if (date <= now) {
+          date.setDate(date.getDate() + 7);
+        }
+
+        candidates.push({ ...service, date });
+      }
+
+      return candidates.sort((a, b) => a.date - b.date)[0];
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const next = getNextService(now);
+      const diff = Math.max(0, next.date - now);
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      document.getElementById("serviceName").textContent = next.name;
+      document.getElementById("days").textContent = pad(days);
+      document.getElementById("hours").textContent = pad(hours);
+      document.getElementById("minutes").textContent = pad(minutes);
+      document.getElementById("seconds").textContent = pad(seconds);
+    }
+
+    function updateClock() {
+      const now = new Date();
+
+      const time = now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+
+      const date = now.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+
+      document.getElementById("welcomeClock").textContent = time;
+      document.getElementById("welcomeDate").textContent = date;
+    }
+
+    const params = new URLSearchParams(location.search);
+    if (params.get("debug") === "1") {
+      document.body.classList.add("debug");
+    }
+
+    const customTicker = params.get("ticker");
+    if (customTicker) {
+      document.getElementById("tickerText").textContent = customTicker;
+    }
+
+    updateCountdown();
+    updateClock();
+    setInterval(updateCountdown, 1000);
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
+
+atrium-display-framed-video-v6.html
+HTML
 
 
