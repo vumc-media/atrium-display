@@ -1,528 +1,341 @@
+ChatGPT Plus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I  just have a folder on my desktop titled LobbyCast. Here are the contents
+
+
+
+
+
+
+
+
+
+nada
+
+Monday 5:56 AM
+
+Able to load Canva images but...
+
+
+Pasted text.txt
+Document
+
+
+Pasted text(1).txt
+Document
+
+
+
+Pasted text(2).txt
+Document
+
+black screen on preview
+
+
+Monday 8:06 PM
+
+Pasted text(3).txt
+Document
+
+
+Pasted text(4).txt
+Document
+
+
+Pasted text(5).txt
+Document
+
+
+Pasted text(6).txt
+Document
+
+
+
+Pasted text(7).txt
+Document
+nothing
+
+
+
+Pasted text(8).txt
+Document
+
+
+
+all it shows
+
+image(20).png
+Let me explain what you are seeing - Top left corner is a netlify browser. underneath is weekly.versaillesumc.org browser. Top right is GT title with church name and time/ date. underneath is live feed from PP7, underneath is GT title with connect and scrolling left to right ticker
+
+Generated image: A widescreen digital signage layout featuring a vibrant church dashboard.
+
+
+Edit
+
+
+image(21).png
+here is the atrium display
+
+
+Pasted text(9).txt
+Document
+
+Pasted text (2).txt
+Document
+name: Build Atrium Page
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Build
+        env:
+          ICS_URL: ${{ secrets.ICS_URL }}
+        run: node build.js
+      - name: Commit built index.html
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add index.html
+          git commit -m "Build" || echo "No changes"
+          git push
+
+Yes — this can absolutely become the single Atrium browser layout, with vMix only supplying the live PP7 video underneath it.
+
+Your current index.html is already the better foundation because it has:
+
+the left welcome/countdown column,
+
+the embedded Welcome Center feed,
+
+the clock,
+
+the weekly schedule area,
+
+and a footer/status strip. 
+
+
+The second build.js is an older layout built around a blank NDI zone, yellow calendar panel, QR band, and weather footer. It is useful for the calendar-building logic, but visually it does not match the Atrium display you just showed. 
+
+
+Best vMix structure
+Use only two main layers:
+
+Layer 1 — PP7 Live Feed
+Layer 2 — Atrium Browser Overlay
+The Atrium browser page would contain:
+
+church branding
+
+welcome countdown
+
+Welcome Center rotating feed
+
+weekly calendar
+
+date/time
+
+QR/connect information
+
+ticker/announcement footer
+
+The large live-video area would be transparent, allowing the PP7 feed underneath to show through.
+
+That means you would no longer need to align five or six separate vMix browser inputs and GT titles. All alignment happens once inside the webpage.
+
+Proposed layout
+┌───────────────┬──────────────────────────────────┐
+│ Welcome       │ Welcome to Versailles UMC        │
+│ Countdown     ├──────────────────────────────────┤
+├───────────────┤                                  │
+│ Welcome       │       TRANSPARENT VIDEO          │
+│ Center Feed   │          WINDOW                  │
+│               │                                  │
+├───────────────┼──────────────────────────────────┤
+│ Time & Date   │ This Week / Upcoming Events      │
+├───────────────┴──────────────────────────────────┤
+│ QR • Church Center • Scrolling Announcement     │
+└──────────────────────────────────────────────────┘
+I would keep the live video around 65–70% of the right side, so it remains the focal point.
+
+Changes needed in the current page
+The current code switches the large right panel between the weekly iframe and an embedded YouTube stream. 
+
+
+For vMix, I would remove the YouTube iframe entirely and replace it with:
+
+<div class="video-window"></div>
+Then make that area transparent:
+
+html,
+body,
+.shell,
+.right-column,
+.main-stage,
+.video-window {
+  background: transparent;
+}
+
+.video-window {
+  position: absolute;
+  inset: 0;
+}
+The outer cards, schedule panels, header, footer, and left column would remain visible, while the center video opening would be transparent.
+
+We would also move the weekly feed into a smaller panel beneath or beside the video rather than letting it occupy the entire right side.
+
+In vMix
+The input order would be:
+
+Input 1: PP7 NDI Live Feed
+Input 2: Atrium Display Browser
+Inside a vMix composition or virtual input:
+
+Layer 1: PP7 NDI
+Layer 2: Atrium browser overlay
+The browser input URL would be the Netlify or GitHub Pages address. You would set the browser input to 1920 × 1080, and the PP7 input would fill the transparent opening.
+
+This is much cleaner than manually aligning:
+
+Welcome Center browser
+
+weekly browser
+
+clock GT title
+
+header GT title
+
+QR title
+
+ticker title
+
+PP7 feed
+
+The page becomes the graphic shell, and vMix supplies only the video. This is the route I recommend.
+
+
+Let's do this. Instead of using GT titles, add embed time/date local temp, welcome, countdown as an embed we dont need 2 things saying Welcome to VUMC. 
+
+I rebuilt the Atrium page as a single browser overlay with:
+
+one “Welcome to Versailles UMC” message
+
+embedded local time and date
+
+embedded Versailles temperature and weather
+
+service countdown
+
+Welcome Center iframe
+
+weekly feed iframe
+
+transparent live-video opening
+
+QR/connect section
+
+scrolling upcoming-events ticker
+
+This follows the structure of your current Atrium page while removing the duplicate welcome messaging and the GT-title dependency. 
+
+
+atrium-overlay-index.html
+
+In vMix, place the PP7 NDI feed underneath this browser input. Set the browser input to 1920×1080 and ensure transparency is enabled so the live feed shows through the large center opening. 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atrium Display</title>
-  <style>
-    :root {
-      --bg1: #08111d;
-      --bg2: #0c1930;
-      --panel: #14233a;
-      --panel2: #1b2f4c;
-      --border: rgba(255,255,255,0.14);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.78);
-      --gold: #d8b15a;
-      --live: #d54848;
-      --radius: 18px;
-      --shadow: 0 12px 28px rgba(0,0,0,0.28);
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
-    }
-
-    .shell {
-      width: 100%;
-      height: 100%;
-      padding: 18px;
-      display: grid;
-      grid-template-columns: 400px 1fr;
-      gap: 18px;
-    }
-
-    .left-column,
-    .right-column {
-      min-height: 0;
-      display: grid;
-      gap: 18px;
-    }
-
-    .left-column {
-      grid-template-rows: auto 1fr auto;
-    }
-
-    .right-column {
-      grid-template-rows: 1fr auto;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      min-height: 0;
-      position: relative;
-    }
-
-    .hero-card {
-      padding: 22px;
-      background: linear-gradient(135deg, #22344f 0%, #1b2d47 60%, #243754 100%);
-    }
-
-    .brand-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .brand-row img {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,0.2);
-      flex-shrink: 0;
-    }
-
-    .brand-row span {
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      font-size: 1rem;
-    }
-
-    .eyebrow {
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--gold);
-      margin-bottom: 8px;
-      font-weight: 800;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 2.15rem;
-      line-height: 1.02;
-      font-weight: 800;
-    }
-
-    .subtitle {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.35;
-      font-weight: 700;
-    }
-
-    .countdown {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    .countbox {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      text-align: center;
-      padding: 12px 8px;
-    }
-
-    .countbox strong {
-      display: block;
-      font-size: 1.6rem;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-
-    .countbox span {
-      font-size: 0.74rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .welcome-card {
-      padding: 18px;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 14px;
-      background: linear-gradient(180deg, #182a45 0%, #13233a 100%);
-    }
-
-    .panel-label {
-      font-size: 0.8rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .panel-title {
-      margin: 0;
-      font-size: 1.3rem;
-      font-weight: 800;
-    }
-
-    .frame-wrap {
-      min-height: 0;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: #0b1322;
-      height: 100%;
-    }
-
-    .frame {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-      background: #0b1322;
-    }
-
-    .clock-card {
-      padding: 18px 20px;
-      background: linear-gradient(180deg, #1b304f 0%, #13233a 100%);
-    }
-
-    .clock-time {
-      font-size: 2.3rem;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .clock-date {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .main-stage {
-      position: relative;
-      min-height: 0;
-      background: #0b1322;
-    }
-
-    .weekly-shell,
-    .live-shell {
-      position: absolute;
-      inset: 0;
-    }
-
-    .live-shell {
-      display: none;
-      background: #000;
-    }
-
-    .live-shell.active {
-      display: block;
-    }
-
-    .live-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 4;
-      background: var(--live);
-      color: #fff;
-      font-size: 0.92rem;
-      font-weight: 800;
-      padding: 7px 11px;
-      border-radius: 10px;
-    }
-
-    .yt-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 4;
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      font-size: 0.92rem;
-      font-weight: 800;
-      padding: 7px 11px;
-      border-radius: 10px;
-    }
-
-    .footer-strip {
-      padding: 14px 16px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      background: linear-gradient(180deg, #22344f 0%, #1a2d49 100%);
-      color: var(--muted);
-      font-size: 0.94rem;
-    }
-
-    .tag {
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 1200px) {
-      .shell {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-      }
-
-      .left-column {
-        grid-template-rows: auto auto auto;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Versailles UMC Atrium Overlay</title>
+<style>
+:root{--navy:#0b1728;--panel:#14243a;--panel2:#1a3353;--blue:#2787df;--gold:#e0b84f;--text:#fff;--muted:rgba(255,255,255,.76);--border:rgba(255,255,255,.14);--radius:18px}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;color:var(--text);font-family:Arial,Helvetica,sans-serif}
+body{padding:14px}
+.overlay{width:100%;height:100%;display:grid;grid-template-columns:390px 1fr;grid-template-rows:1fr 112px;gap:14px}
+.left{min-height:0;display:grid;grid-template-rows:278px 1fr 126px;gap:14px}
+.right{min-height:0;display:grid;grid-template-rows:132px 1fr 278px;gap:14px}
+.card{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(145deg,rgba(27,54,89,.98),rgba(9,24,42,.98));box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.welcome-card{padding:20px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:15px}.brand img{width:48px;height:48px;border-radius:12px;object-fit:cover;background:#fff}.brand-name{font-size:1.05rem;font-weight:900;letter-spacing:.06em}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.16em;font-size:.76rem;font-weight:900;margin-bottom:7px}.welcome-title{margin:0;font-size:2rem;line-height:1.02;font-weight:900}
+.count-label{margin-top:13px;color:var(--muted);font-weight:800;font-size:.9rem}.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.countbox{padding:10px 5px;text-align:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);border-radius:12px}.countbox strong{display:block;font-size:1.35rem;line-height:1;margin-bottom:5px}.countbox span{display:block;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800}
+.feed-card{min-height:0;display:grid;grid-template-rows:66px 1fr;padding:14px}.section-label{color:var(--gold);text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:900}.section-title{margin-top:5px;font-size:1.18rem;font-weight:900}.frame-wrap{min-height:0;overflow:hidden;border-radius:13px;background:#0a1525;border:1px solid rgba(255,255,255,.1)}iframe{display:block;width:100%;height:100%;border:0;background:transparent}
+.info-card{display:grid;grid-template-columns:1fr auto;align-items:center;padding:17px 19px}.clock-time{font-size:2.05rem;font-weight:900;line-height:1}.clock-date{margin-top:7px;color:var(--muted);font-size:.86rem;font-weight:700}.weather{text-align:right}.weather-temp{font-size:1.85rem;font-weight:900;line-height:1}.weather-label{margin-top:7px;color:var(--muted);font-size:.82rem;max-width:150px}
+.topbar{display:grid;grid-template-columns:1fr auto;align-items:center;padding:20px 24px}.topbar-title{font-size:2rem;font-weight:900;line-height:1}.topbar-subtitle{margin-top:8px;color:var(--muted);font-size:.95rem;font-weight:700}.live-pill{padding:10px 14px;border-radius:999px;background:#c92835;color:#fff;font-weight:900;letter-spacing:.05em}
+.video-window{position:relative;min-height:0;background:transparent;border:2px solid rgba(255,255,255,.26);border-radius:var(--radius);box-shadow:0 0 0 1px rgba(39,135,223,.22),0 14px 34px rgba(0,0,0,.35);overflow:hidden}.video-window:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 38px rgba(0,0,0,.18)}.video-label{position:absolute;left:18px;bottom:16px;z-index:2;padding:9px 13px;border-radius:10px;background:rgba(5,14,25,.78);font-weight:900;font-size:1rem}
+.weekly-card{min-height:0;padding:0;background:rgba(8,17,30,.97)}
+.bottom-bar{grid-column:1/-1;display:grid;grid-template-columns:470px 1fr;gap:0;align-items:stretch}.connect-block{display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f7f9fc;color:#0d1a2d}.qr{width:82px;height:82px;background:#fff}.connect-kicker{color:#1763aa;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;font-weight:900}.connect-title{margin-top:4px;font-size:1.35rem;font-weight:900}.connect-copy{margin-top:3px;color:#4c5b70;font-size:.82rem;font-weight:700}.ticker{display:flex;align-items:center;overflow:hidden;background:linear-gradient(145deg,rgba(20,35,58,.99),rgba(8,19,33,.99));border-left:1px solid rgba(255,255,255,.1)}.ticker-label{align-self:stretch;display:flex;align-items:center;padding:0 22px;background:#145fa8;font-weight:900;letter-spacing:.05em;white-space:nowrap}.ticker-track{position:relative;width:100%;overflow:hidden;white-space:nowrap}.ticker-text{display:inline-block;padding-left:100%;animation:ticker 32s linear infinite;font-size:1.05rem;font-weight:700}@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+</style>
 </head>
 <body>
-  <div class="shell">
-    <div class="left-column">
-      <section class="card hero-card">
-        <div class="brand-row">
-          <img src="https://yt3.googleusercontent.com/0VzY1FMygvH9BmYV_gu_hNyZsW1kY5VPDdeRtHxyzfcXtqM5Rc6Kongrr_dw3v5I_hwJv63vIQ=s900-c-k-c0x00ffffff-no-rj" alt="VUMC Logo" />
-          <span>VERSAILLES UMC</span>
-        </div>
-        <div class="eyebrow">Atrium Display</div>
-        <h1 class="title">Welcome to Versailles UMC</h1>
-        <div class="subtitle" id="heroSubtitle">Next Service Starts In</div>
-        <div class="countdown" id="countdown"></div>
-      </section>
-
-      <section class="card welcome-card">
-        <div>
-          <div class="panel-label">Welcome Center</div>
-          <h2 class="panel-title">Welcome Center Feed</h2>
-        </div>
-        <div class="frame-wrap">
-          <iframe id="welcomeFrame" class="frame" title="Welcome Center Feed"></iframe>
-        </div>
-      </section>
-
-      <section class="card clock-card">
-        <div class="clock-time" id="clockTime">--:--</div>
-        <div class="clock-date" id="clockDate">Loading date...</div>
-      </section>
-    </div>
-
-    <div class="right-column">
-      <section class="card main-stage">
-        <div class="weekly-shell">
-          <iframe id="weeklyFrame" class="frame" title="Weekly Feed"></iframe>
-        </div>
-
-        <div class="live-shell" id="liveShell">
-          <iframe id="liveFrame" class="frame" title="YouTube Live Feed" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
-          <div class="live-badge">● LIVE</div>
-          <div class="yt-badge">YouTube</div>
-        </div>
-      </section>
-
-      <section class="card footer-strip">
-        <div id="footerMessage">Announcements, highlights, and ways to connect.</div>
-        <div class="tag" id="modeTag">Weekly Feed</div>
-      </section>
-    </div>
-  </div>
-
-  <script>
-    const CONFIG = {
-      timezone: 'America/New_York',
-      weeklyFeedUrl: 'https://vumc-weekly-feed.netlify.app/',
-      welcomeCenterUrl: 'https://welcome-center.netlify.app/',
-      youtubeEmbedUrl: 'https://www.youtube.com/embed/live_stream?channel=UC_svgodM3blLqWEBQ5yNjmA&autoplay=1&mute=1',
-      streamCheckMs: 30000,
-      serviceWindows: [
-        { day: 0, start: '10:15', end: '11:45', label: 'Worship Service' }
-      ]
-    };
-
-    const els = {
-      weeklyFrame: document.getElementById('weeklyFrame'),
-      welcomeFrame: document.getElementById('welcomeFrame'),
-      liveFrame: document.getElementById('liveFrame'),
-      liveShell: document.getElementById('liveShell'),
-      footerMessage: document.getElementById('footerMessage'),
-      modeTag: document.getElementById('modeTag'),
-      clockTime: document.getElementById('clockTime'),
-      clockDate: document.getElementById('clockDate'),
-      countdown: document.getElementById('countdown'),
-      heroSubtitle: document.getElementById('heroSubtitle')
-    };
-
-    function formatInTimeZone(date, options) {
-      return new Intl.DateTimeFormat('en-US', { timeZone: CONFIG.timezone, ...options }).format(date);
-    }
-
-    function getPartsInTimeZone(date = new Date()) {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: CONFIG.timezone,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        weekday: 'short'
-      });
-
-      const parts = formatter.formatToParts(date);
-      const map = {};
-      for (const p of parts) {
-        if (p.type !== 'literal') map[p.type] = p.value;
-      }
-      return map;
-    }
-
-    function weekdayToIndex(shortWeekday) {
-      return { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[shortWeekday];
-    }
-
-    function minutesFromTimeString(value) {
-      const [h, m] = value.split(':').map(Number);
-      return (h * 60) + m;
-    }
-
-    function getScheduleStatus(now = new Date()) {
-      const parts = getPartsInTimeZone(now);
-      const currentWeekday = weekdayToIndex(parts.weekday);
-      const currentMinutes = (Number(parts.hour) * 60) + Number(parts.minute);
-
-      let currentWindow = null;
-      let nextWindow = null;
-
-      for (const win of CONFIG.serviceWindows) {
-        const startMin = minutesFromTimeString(win.start);
-        const endMin = minutesFromTimeString(win.end);
-        if (win.day === currentWeekday && currentMinutes >= startMin && currentMinutes < endMin) {
-          currentWindow = win;
-        }
-      }
-
-      if (!currentWindow) {
-        for (let offset = 0; offset < 8; offset++) {
-          const checkDay = (currentWeekday + offset) % 7;
-          const candidates = CONFIG.serviceWindows
-            .filter(win => win.day === checkDay)
-            .sort((a, b) => minutesFromTimeString(a.start) - minutesFromTimeString(b.start));
-
-          for (const candidate of candidates) {
-            const startMin = minutesFromTimeString(candidate.start);
-            if (offset > 0 || startMin > currentMinutes) {
-              nextWindow = { ...candidate, daysAway: offset };
-              return { currentWindow: null, nextWindow };
-            }
-          }
-        }
-      }
-
-      return { currentWindow, nextWindow };
-    }
-
-    function getNextWindowDate(nextWindow, now = new Date()) {
-      if (!nextWindow) return null;
-
-      const tzDateString = formatInTimeZone(now, {
-        year: 'numeric', month: '2-digit', day: '2-digit'
-      });
-      const [month, day, year] = tzDateString.split('/').map(Number);
-      const base = new Date(year, month - 1, day);
-      base.setDate(base.getDate() + (nextWindow.daysAway || 0));
-      const [hours, minutes] = nextWindow.start.split(':').map(Number);
-      base.setHours(hours, minutes, 0, 0);
-      return base;
-    }
-
-    function updateCountdown() {
-      const { currentWindow, nextWindow } = getScheduleStatus(new Date());
-      els.countdown.innerHTML = '';
-
-      if (currentWindow) {
-        els.heroSubtitle.textContent = 'Service In Progress';
-        return;
-      }
-
-      els.heroSubtitle.textContent = 'Next Service Starts In';
-      const nextDate = getNextWindowDate(nextWindow, new Date());
-      if (!nextDate) return;
-
-      const diff = nextDate.getTime() - Date.now();
-      if (diff <= 0) return;
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      const parts = [
-        ['Days', days],
-        ['Hours', hours],
-        ['Minutes', minutes],
-        ['Seconds', seconds]
-      ];
-
-      for (const [label, value] of parts) {
-        const div = document.createElement('div');
-        div.className = 'countbox';
-        div.innerHTML = `<strong>${String(value).padStart(2, '0')}</strong><span>${label}</span>`;
-        els.countdown.appendChild(div);
-      }
-    }
-
-    function updateClock() {
-      const now = new Date();
-      els.clockTime.textContent = formatInTimeZone(now, {
-        hour: 'numeric', minute: '2-digit', hour12: true
-      });
-      els.clockDate.textContent = formatInTimeZone(now, {
-        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-      });
-    }
-
-    function setLiveMode(isLive) {
-      if (isLive) {
-        els.liveShell.classList.add('active');
-        els.liveFrame.src = CONFIG.youtubeEmbedUrl;
-        els.footerMessage.textContent = 'YouTube Live is active in the large display frame.';
-        els.modeTag.textContent = 'LIVE NOW';
-      } else {
-        els.liveShell.classList.remove('active');
-        els.liveFrame.src = 'about:blank';
-        els.footerMessage.textContent = 'Announcements, highlights, and ways to connect.';
-        els.modeTag.textContent = 'Weekly Feed';
-      }
-    }
-
-    function checkLiveWindow() {
-      const { currentWindow } = getScheduleStatus(new Date());
-      setLiveMode(!!currentWindow);
-    }
-
-    function init() {
-      els.weeklyFrame.src = CONFIG.weeklyFeedUrl;
-      els.welcomeFrame.src = CONFIG.welcomeCenterUrl;
-      updateClock();
-      updateCountdown();
-      checkLiveWindow();
-
-      setInterval(() => {
-        updateClock();
-        updateCountdown();
-      }, 1000);
-
-      setInterval(checkLiveWindow, CONFIG.streamCheckMs);
-    }
-
-    init();
-  </script>
+<main class="overlay">
+<aside class="left">
+<section class="card welcome-card">
+<div class="brand"><img src="https://yt3.googleusercontent.com/0VzY1FMygvH9BmYV_gu_hNyZsW1kY5VPDdeRtHxyzfcXtqM5Rc6Kongrr_dw3v5I_hwJv63vIQ=s900-c-k-c0x00ffffff-no-rj" alt="VUMC logo"><div class="brand-name">VERSAILLES UMC</div></div>
+<div class="eyebrow">Atrium Display</div><h1 class="welcome-title">Welcome to Versailles UMC</h1><div class="count-label" id="countLabel">Next service starts in</div><div class="countdown" id="countdown"></div>
+</section>
+<section class="card feed-card"><div><div class="section-label">Welcome Center</div><div class="section-title">Information & Sign-Ups</div></div><div class="frame-wrap"><iframe title="Welcome Center" src="https://welcome-center.netlify.app/"></iframe></div></section>
+<section class="card info-card"><div><div class="clock-time" id="clockTime">--:--</div><div class="clock-date" id="clockDate">Loading date…</div></div><div class="weather"><div class="weather-temp" id="weatherTemp">--°</div><div class="weather-label" id="weatherLabel">Loading local weather…</div></div></section>
+</aside>
+<section class="right">
+<header class="card topbar"><div><div class="topbar-title">Versailles United Methodist Church</div><div class="topbar-subtitle" id="serviceStatus">Worship, connection, and community</div></div><div class="live-pill">● LIVE FEED</div></header>
+<section class="video-window"><div class="video-label" id="videoLabel">Sanctuary Live</div></section>
+<section class="card weekly-card"><iframe title="This Week at VUMC" src="https://vumc-weekly-feed.netlify.app/"></iframe></section>
+</section>
+<footer class="card bottom-bar"><div class="connect-block"><canvas id="qr" class="qr" width="82" height="82"></canvas><div><div class="connect-kicker">Stay connected</div><div class="connect-title">VUMC Connect</div><div class="connect-copy">Events • Giving • Check-In • Prayer Requests</div></div></div><div class="ticker"><div class="ticker-label">UPCOMING</div><div class="ticker-track"><div class="ticker-text">Rooted Youth — Sunday at 4:00 PM • Cornerstones Potluck — Thursday at Noon • Prayer Meeting — Wednesday at 6:30 PM</div></div></div></footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script>
+const CONFIG={timezone:'America/New_York',latitude:38.052,longitude:-84.729,connectUrl:'https://vumc.versaillesumc.org',serviceWindows:[{day:0,start:'09:30',end:'10:15',label:'Traditional Worship'},{day:0,start:'10:30',end:'11:45',label:'Contemporary Worship'}]};
+const $=id=>document.getElementById(id);
+new QRious({element:$('qr'),value:CONFIG.connectUrl,size:82,level:'H'});
+function fmt(d,o){return new Intl.DateTimeFormat('en-US',{timeZone:CONFIG.timezone,...o}).format(d)}
+function parts(d=new Date()){const f=new Intl.DateTimeFormat('en-US',{timeZone:CONFIG.timezone,weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});const out={};for(const p of f.formatToParts(d)){if(p.type!=='literal')out[p.type]=p.value}return out}
+function wd(s){return{Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[s]}function mins(v){const[h,m]=v.split(':').map(Number);return h*60+m}
+function status(now=new Date()){const p=parts(now),day=wd(p.weekday),cur=Number(p.hour)*60+Number(p.minute);for(const w of CONFIG.serviceWindows){if(w.day===day&&cur>=mins(w.start)&&cur<mins(w.end))return{active:w,next:null}}for(let off=0;off<8;off++){const d=(day+off)%7;for(const w of CONFIG.serviceWindows.filter(x=>x.day===d).sort((a,b)=>mins(a.start)-mins(b.start))){if(off>0||mins(w.start)>cur)return{active:null,next:{...w,daysAway:off}}}}return{active:null,next:null}}
+function target(w){if(!w)return null;const[m,d,y]=fmt(new Date(),{year:'numeric',month:'2-digit',day:'2-digit'}).split('/').map(Number);const x=new Date(y,m-1,d);x.setDate(x.getDate()+(w.daysAway||0));const[h,n]=w.start.split(':').map(Number);x.setHours(h,n,0,0);return x}
+function update(){const now=new Date();$('clockTime').textContent=fmt(now,{hour:'numeric',minute:'2-digit',hour12:true});$('clockDate').textContent=fmt(now,{weekday:'long',month:'long',day:'numeric',year:'numeric'});const{active,next}=status(now);$('countdown').innerHTML='';if(active){$('countLabel').textContent='Service in progress';$('serviceStatus').textContent=active.label+' is now in progress';$('videoLabel').textContent=active.label;return}$('countLabel').textContent='Next service starts in';$('serviceStatus').textContent=next?'Next: '+next.label:'Worship, connection, and community';$('videoLabel').textContent='Sanctuary Live';const t=target(next);if(!t)return;const diff=Math.max(0,t.getTime()-Date.now()),vals=[['Days',Math.floor(diff/86400000)],['Hours',Math.floor(diff/3600000)%24],['Minutes',Math.floor(diff/60000)%60],['Seconds',Math.floor(diff/1000)%60]];for(const[l,v]of vals){const b=document.createElement('div');b.className='countbox';b.innerHTML=`<strong>${String(v).padStart(2,'0')}</strong><span>${l}</span>`;$('countdown').appendChild(b)}}
+const labels={0:'Clear',1:'Mostly sunny',2:'Partly cloudy',3:'Cloudy',45:'Fog',48:'Freezing fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Rain showers',82:'Heavy showers',95:'Thunderstorms'};
+async function weather(){try{const p=new URLSearchParams({latitude:CONFIG.latitude,longitude:CONFIG.longitude,current:'temperature_2m,weather_code',temperature_unit:'fahrenheit',timezone:CONFIG.timezone});const r=await fetch('https://api.open-meteo.com/v1/forecast?'+p,{cache:'no-store'});if(!r.ok)throw new Error();const j=await r.json();$('weatherTemp').textContent=Math.round(j.current.temperature_2m)+'°F';$('weatherLabel').textContent=labels[j.current.weather_code]||'Versailles weather'}catch{$('weatherTemp').textContent='--°';$('weatherLabel').textContent='Weather unavailable'}}
+update();weather();setInterval(update,1000);setInterval(weather,900000);
+</script>
 </body>
 </html>
+
+
+atrium-overlay-index.html
+HTML
+
+
