@@ -85,19 +85,15 @@
     }
 
     .datetime-line {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
+      display: block;
+      width: 100%;
       margin: 0;
-      font-size: clamp(20px, 1.55vw, 30px);
-      line-height: 1.1;
+      font-size: clamp(17px, 1.3vw, 25px);
+      line-height: 1.15;
       font-weight: 850;
       white-space: nowrap;
-    }
-
-    .datetime-separator {
-      color: var(--muted);
-      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .service-label {
@@ -365,11 +361,7 @@
   <main class="canvas">
     <section class="left-stack">
       <article class="panel welcome-card">
-        <div class="datetime-line">
-          <span id="welcomeDate">Loading date…</span>
-          <span class="datetime-separator">•</span>
-          <span id="welcomeClock">--:-- --</span>
-        </div>
+        <div class="datetime-line" id="dateTimeLine">Loading date and time…</div>
 
         <div class="service-label">
           Next Event: <span id="serviceName">Traditional Worship</span>
@@ -512,8 +504,7 @@
         year: "numeric"
       });
 
-      document.getElementById("welcomeClock").textContent = time;
-      document.getElementById("welcomeDate").textContent = date;
+      document.getElementById("dateTimeLine").textContent = `${date} • ${time}`;
     }
 
     const params = new URLSearchParams(location.search);
