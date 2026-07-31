@@ -70,38 +70,57 @@
       min-height: 0;
     }
 
-    .welcome-card {
-      position: relative;
-      overflow: hidden;
-      padding: 17px 17px 14px;
-      background:
-        radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.10), transparent 30%),
-        linear-gradient(135deg, #8b1e2d 0%, #6f1623 55%, #4d0f18 100%);
-      border-color: rgba(255, 224, 170, 0.28);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
-    }
+    
+.welcome-card{
+  padding:0;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:52px 1fr;
+  background:#ffffff;
+  border:none;
+  border-radius:18px;
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
 
-    .welcome-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #f0c36b, #fff0bd, #f0c36b);
-    }
+.info-bar{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  align-items:center;
+  background:#7b2334;
+  color:#fff;
+  padding:0 22px;
+  font-size:20px;
+  font-weight:700;
+}
 
-    .welcome-card .service-label,
-    .welcome-card .count-label {
-      color: rgba(255, 255, 255, 0.78);
-    }
+.info-item{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
 
-    .welcome-card .count-box {
-      background: rgba(255, 255, 255, 0.10);
-      border-color: rgba(255, 255, 255, 0.16);
-    }
+.welcome-message{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+.welcome-small{
+  color:#7b2334;
+  font-size:26px;
+  font-weight:500;
+}
+
+.welcome-large{
+  color:#7b2334;
+  font-size:42px;
+  font-weight:700;
+}
+
 
 
     .eyebrow {
@@ -389,32 +408,22 @@
 <body>
   <main class="canvas">
     <section class="left-stack">
+      
       <article class="panel welcome-card">
-        <div class="datetime-line" id="dateTimeLine">Loading date and time…</div>
 
-        <div class="service-label">
-          Next Event: <span id="serviceName">Traditional Worship</span>
+        <div class="info-bar">
+          <div class="info-item">📅 <span id="currentDate">Thursday, July 30</span></div>
+          <div class="info-item">🕒 <span id="currentTime">8:42 PM</span></div>
+          <div class="info-item">☀️ <span id="weatherText">78° Partly Cloudy</span></div>
         </div>
 
-        <div class="countdown" aria-label="Countdown to the next service">
-          <div class="count-box">
-            <div class="count-value" id="days">00</div>
-            <span class="count-label">DAYS</span>
-          </div>
-          <div class="count-box">
-            <div class="count-value" id="hours">00</div>
-            <span class="count-label">HOURS</span>
-          </div>
-          <div class="count-box">
-            <div class="count-value" id="minutes">00</div>
-            <span class="count-label">MINUTES</span>
-          </div>
-          <div class="count-box">
-            <div class="count-value" id="seconds">00</div>
-            <span class="count-label">SECONDS</span>
-          </div>
+        <div class="welcome-message">
+          <div class="welcome-small">Welcome to</div>
+          <div class="welcome-large">Versailles United Methodist Church</div>
         </div>
+
       </article>
+
 
       <article class="panel slideshow-panel">
         <div class="frame">
@@ -518,23 +527,24 @@
       document.getElementById("seconds").textContent = pad(seconds);
     }
 
-    function updateClock() {
-      const now = new Date();
+    
+function updateClock() {
+  const now = new Date();
 
-      const time = now.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit"
-      });
+  document.getElementById("currentDate").textContent =
+    now.toLocaleDateString("en-US", {
+      weekday:"long",
+      month:"long",
+      day:"numeric"
+    });
 
-      const date = now.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      });
+  document.getElementById("currentTime").textContent =
+    now.toLocaleTimeString("en-US", {
+      hour:"numeric",
+      minute:"2-digit"
+    });
+}
 
-      document.getElementById("dateTimeLine").textContent = `${date} • ${time}`;
-    }
 
     const params = new URLSearchParams(location.search);
     if (params.get("debug") === "1") {
