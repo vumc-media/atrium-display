@@ -71,7 +71,36 @@
     }
 
     .welcome-card {
-      padding: 13px 17px 14px;
+      position: relative;
+      overflow: hidden;
+      padding: 17px 17px 14px;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.10), transparent 30%),
+        linear-gradient(135deg, #8b1e2d 0%, #6f1623 55%, #4d0f18 100%);
+      border-color: rgba(255, 224, 170, 0.28);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+    }
+
+    .welcome-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #f0c36b, #fff0bd, #f0c36b);
+    }
+
+    .welcome-card .service-label,
+    .welcome-card .count-label {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .welcome-card .count-box {
+      background: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.16);
     }
 
 
