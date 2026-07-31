@@ -543,17 +543,7 @@
 
     function updateClock() {
       const now = new Date();
-
-      document.getElementById("dateTimeLine").textContent =
-        now.toLocaleDateString("en-US",{
-          weekday:"long",
-          month:"long",
-          day:"numeric",
-          year:"numeric"
-        }) + " • " +
-        now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
-
-      document.getElementById("headerDate").textContent =
+document.getElementById("headerDate").textContent =
         now.toLocaleDateString("en-US",{
           weekday:"long",
           month:"long",
