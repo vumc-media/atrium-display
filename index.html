@@ -4,240 +4,1573 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Versailles UMC Atrium Display</title>
+
 <style>
 :root{
-  --bg:#17120f; --bg2:#2a1b13; --panel:rgba(42,28,20,.92);
-  --panel2:rgba(62,39,25,.94); --accent:#d89245; --accent2:#f1c77e;
-  --text:#fffaf1; --muted:#e3d7c9; --line:rgba(255,235,205,.18);
-  --logo-red:#a91e2c; --radius:18px; --gap:14px;
+  --bg:#17120f;
+  --bg2:#2a1b13;
+  --panel:rgba(42,28,20,.92);
+  --panel2:rgba(62,39,25,.94);
+  --accent:#d89245;
+  --accent2:#f1c77e;
+  --text:#fffaf1;
+  --muted:#e3d7c9;
+  --line:rgba(255,235,205,.18);
+  --radius:18px;
 }
+
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:transparent}
-body{background:var(--bg)}
+
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:transparent;
+}
+
+body{
+  background:var(--bg);
+}
+
 body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
   background:
-    radial-gradient(circle at 7% 8%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 24%),
-    radial-gradient(circle at 94% 92%,color-mix(in srgb,var(--accent2) 13%,transparent),transparent 28%),
+    radial-gradient(
+      circle at 7% 8%,
+      color-mix(in srgb,var(--accent) 22%,transparent),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 94% 92%,
+      color-mix(in srgb,var(--accent2) 13%,transparent),
+      transparent 28%
+    ),
     linear-gradient(135deg,var(--bg),var(--bg2));
 }
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
 .canvas{
-  position:relative;z-index:1;width:100vw;height:100vh;min-width:1280px;min-height:720px;
-  padding:16px;display:grid;grid-template-columns:38% 1fr;grid-template-rows:1fr 116px 42px;gap:12px 16px;
+  position:relative;
+  z-index:1;
+  width:100vw;
+  height:100vh;
+  min-width:1280px;
+  min-height:720px;
+  padding:16px;
+
+  display:grid;
+  grid-template-columns:38% 1fr;
+  grid-template-rows:1fr 116px 42px;
+  gap:12px 16px;
 }
-.left{grid-column:1;grid-row:1 / 4;display:grid;grid-template-rows:auto auto 1fr;gap:10px;min-height:0}
-.right{grid-column:2;grid-row:1 / 4;display:grid;grid-template-rows:92px minmax(0,1fr) 116px 42px;gap:12px;min-width:0;min-height:0}
-.panel{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.16)}
-.brand-countdown{display:grid;grid-template-columns:132px 1fr;position:relative}
-.brand-countdown::after{content:"";position:absolute;left:132px;top:14px;bottom:14px;width:1px;background:var(--line)}
-.brand{display:flex;align-items:center;justify-content:center;padding:10px}
-.church-logo{display:block;width:104px;height:104px;object-fit:contain;background:white;border-radius:12px;padding:5px}
-.next{padding:13px 16px 11px 18px}
-.next-label{font-size:10px;letter-spacing:.18em;font-weight:900;color:var(--accent2);text-transform:uppercase}
-.next-name{font-size:18px;font-weight:900;margin:5px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.count{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;text-align:center;padding:5px 2px}
-.count b{display:block;font-size:23px;line-height:1}.count span{display:block;margin-top:4px;font-size:8px;letter-spacing:.08em;color:var(--muted)}
-.slides{padding:10px;min-height:0}.frame{position:relative;width:100%;aspect-ratio:16 / 7.6;overflow:hidden;border-radius:15px;background:#111}.frame iframe{width:100%;height:100%;border:0;display:block}
-.weekly{min-height:0;display:grid;grid-template-rows:1fr;overflow:hidden;border-radius:0}.weekly iframe{width:100%;height:100%;border:0;display:block;background:transparent}
-.header{display:grid;grid-template-columns:1fr auto;align-items:center;padding:13px 22px;position:relative}
-.header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent)}
-.season{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);font-weight:900}
-.welcome{font-family:Georgia,serif;font-size:clamp(40px,3.2vw,62px);font-weight:700;line-height:1;margin-top:0;white-space:nowrap}
-.meta{text-align:right}.date{font-size:14px;font-weight:800}.time{font-size:27px;font-weight:900;color:var(--accent2)}
-.video{position:relative;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:hidden}
-.debug{display:none;position:absolute;inset:0;align-items:center;justify-content:center;border:2px dashed var(--accent);color:var(--accent2);background:rgba(0,0,0,.25);font-size:28px;font-weight:900}
-body.debug .debug{display:flex}
-.connect{display:grid;grid-template-columns:104px 1fr;background:#fff;color:#1d1713;border-radius:var(--radius)}
-.connect img{width:104px;height:104px;padding:7px}
-.connect-copy{display:flex;flex-direction:column;justify-content:center;padding:10px 20px;background:linear-gradient(120deg,#fffaf2,#eadfce)}
-.connect-copy small{color:#7b4b26;font-weight:900;letter-spacing:.12em}.connect-copy strong{font-size:26px;color:#261a13;margin-top:3px}.connect-copy span{font-size:13px;color:#624d3d;margin-top:3px}
-.ticker{display:flex;align-items:center;overflow:hidden;white-space:nowrap;border-radius:12px;background:rgba(0,0,0,.32);border:1px solid var(--line);font-size:16px}
-.ticker-track{display:inline-block;min-width:max-content;padding-left:100%;animation:ticker 30s linear infinite}
-@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 
-/* Seasonal decorative wash; deliberately stays OUT of the transparent live-video region. */
-.canvas::after{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.18;background:radial-gradient(circle at 0 100%,var(--accent),transparent 22%)}
+.left{
+  grid-column:1;
+  grid-row:1 / 4;
 
-/* Themes */
-body[data-season="advent"]{--bg:#17101e;--bg2:#291536;--panel:#261832;--panel2:#392047;--accent:#8b63b8;--accent2:#e1c8f3}
-body[data-season="christmas"]{--bg:#101813;--bg2:#182b20;--panel:#17251c;--panel2:#24402d;--accent:#b51f32;--accent2:#e8c66a}
-body[data-season="epiphany"]{--bg:#101a22;--bg2:#162a36;--panel:#172a35;--panel2:#213c4b;--accent:#d5b65a;--accent2:#f1df9c}
-body[data-season="lent"]{--bg:#17131d;--bg2:#282033;--panel:#221b2c;--panel2:#342943;--accent:#76509b;--accent2:#cdb5df}
-body[data-season="holyweek"]{--bg:#120f10;--bg2:#251719;--panel:#211719;--panel2:#362124;--accent:#8d2531;--accent2:#d6b9a6}
-body[data-season="easter"]{--bg:#1b1810;--bg2:#332b16;--panel:#292414;--panel2:#443b1d;--accent:#e4c654;--accent2:#fff3b0}
-body[data-season="pentecost"]{--bg:#1b0d0d;--bg2:#3a1111;--panel:#301313;--panel2:#501b18;--accent:#d43b25;--accent2:#ffc15b}
-body[data-season="ordinary"]{--bg:#0e1c16;--bg2:#163326;--panel:#173025;--panel2:#214535;--accent:#4c9a68;--accent2:#b7d8a9}
-body[data-season="fall"]{--bg:#17120f;--bg2:#342016;--panel:#2b1d15;--panel2:#4a2d1c;--accent:#c86f2d;--accent2:#efbd72}
+  display:grid;
+  grid-template-rows:auto auto 1fr;
+  gap:10px;
+
+  min-height:0;
+}
+
+.right{
+  grid-column:2;
+  grid-row:1 / 4;
+
+  display:grid;
+  grid-template-rows:92px minmax(0,1fr) 116px 42px;
+  gap:12px;
+
+  min-width:0;
+  min-height:0;
+}
+
+.panel{
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 12px 30px rgba(0,0,0,.16);
+}
+
+
+/* =========================================================
+   LOGO + WORSHIP COUNTDOWN
+   ========================================================= */
+
+.brand-countdown{
+  display:grid;
+  grid-template-columns:132px 1fr;
+  position:relative;
+}
+
+.brand-countdown::after{
+  content:"";
+  position:absolute;
+  left:132px;
+  top:14px;
+  bottom:14px;
+  width:1px;
+  background:var(--line);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+}
+
+.church-logo{
+  display:block;
+  width:104px;
+  height:104px;
+  object-fit:contain;
+  background:white;
+  border-radius:12px;
+  padding:5px;
+}
+
+.next{
+  padding:13px 16px 11px 18px;
+}
+
+.next-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  font-weight:900;
+  color:var(--accent2);
+  text-transform:uppercase;
+}
+
+.next-name{
+  font-size:18px;
+  font-weight:900;
+  margin:5px 0 7px;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.countdown{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px;
+}
+
+.count{
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--line);
+  border-radius:10px;
+  text-align:center;
+  padding:5px 2px;
+}
+
+.count b{
+  display:block;
+  font-size:23px;
+  line-height:1;
+}
+
+.count span{
+  display:block;
+  margin-top:4px;
+  font-size:8px;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+
+
+/* =========================================================
+   WELCOME CENTER
+   ========================================================= */
+
+.slides{
+  padding:10px;
+  min-height:0;
+}
+
+.frame{
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 7.6;
+  overflow:hidden;
+  border-radius:15px;
+  background:#111;
+}
+
+.frame iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+
+
+/* =========================================================
+   WEEKLY SCHEDULE
+   ========================================================= */
+
+.weekly{
+  min-height:0;
+  display:grid;
+  grid-template-rows:1fr;
+  overflow:hidden;
+  border-radius:0;
+}
+
+.weekly iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  background:transparent;
+}
+
+
+/* =========================================================
+   WELCOME HEADER
+   ========================================================= */
+
+.header{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  padding:13px 22px;
+  position:relative;
+}
+
+.header::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:6px;
+  background:var(--accent);
+}
+
+.welcome{
+  font-family:Georgia,serif;
+  font-size:clamp(40px,3.2vw,62px);
+  font-weight:700;
+  line-height:1;
+  margin-top:0;
+  white-space:nowrap;
+}
+
+.meta{
+  text-align:right;
+}
+
+.date{
+  font-size:14px;
+  font-weight:800;
+}
+
+.time{
+  font-size:27px;
+  font-weight:900;
+  color:var(--accent2);
+}
+
+
+/* =========================================================
+   LIVE VIDEO AREA
+   KEEP THIS AREA EMPTY / TRANSPARENT
+   ========================================================= */
+
+.video{
+  position:relative;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  overflow:hidden;
+}
+
+.debug{
+  display:none;
+  position:absolute;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  border:2px dashed var(--accent);
+  color:var(--accent2);
+  background:rgba(0,0,0,.25);
+  font-size:28px;
+  font-weight:900;
+}
+
+body.debug .debug{
+  display:flex;
+}
+
+
+/* =========================================================
+   CONNECT + NEW HERE BANNER
+   ========================================================= */
+
+.connect{
+  display:grid;
+  grid-template-columns:
+    104px
+    minmax(0,1.15fr)
+    1px
+    minmax(0,.85fr);
+
+  align-items:stretch;
+
+  background:#fff;
+  color:#1d1713;
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+
+.connect img{
+  width:104px;
+  height:104px;
+  padding:7px;
+  align-self:center;
+}
+
+.connect-copy,
+.new-here{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:9px 18px;
+
+  background:
+    linear-gradient(
+      120deg,
+      #fffaf2,
+      #eadfce
+    );
+}
+
+.connect-copy small,
+.new-here small{
+  color:#7b4b26;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+
+.connect-copy strong,
+.new-here strong{
+  font-size:23px;
+  line-height:1.05;
+  color:#261a13;
+  margin-top:3px;
+}
+
+.connect-copy span,
+.new-here span{
+  font-size:13px;
+  line-height:1.2;
+  color:#624d3d;
+  margin-top:4px;
+}
+
+.connect-divider{
+  width:1px;
+  margin:14px 0;
+  background:rgba(123,75,38,.28);
+}
+
+
+/* =========================================================
+   TICKER
+   ========================================================= */
+
+.ticker{
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  white-space:nowrap;
+
+  border-radius:12px;
+
+  background:rgba(0,0,0,.32);
+  border:1px solid var(--line);
+
+  font-size:16px;
+}
+
+.ticker-track{
+  display:inline-block;
+  min-width:max-content;
+  padding-left:100%;
+  animation:ticker 30s linear infinite;
+}
+
+@keyframes ticker{
+  from{
+    transform:translateX(0);
+  }
+
+  to{
+    transform:translateX(-100%);
+  }
+}
+
+
+/* =========================================================
+   SEASONAL BACKGROUND ACCENT
+   Does NOT occupy the live video area.
+   ========================================================= */
+
+.canvas::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:0;
+  pointer-events:none;
+  opacity:.18;
+
+  background:
+    radial-gradient(
+      circle at 0 100%,
+      var(--accent),
+      transparent 22%
+    );
+}
+
+
+/* =========================================================
+   SEASONAL THEMES
+
+   These are INTERNAL design tags only.
+   Nothing displays "Fall", "Advent", etc. on screen.
+   ========================================================= */
+
+body[data-season="advent"]{
+  --bg:#17101e;
+  --bg2:#291536;
+  --panel:#261832;
+  --panel2:#392047;
+  --accent:#8b63b8;
+  --accent2:#e1c8f3;
+}
+
+body[data-season="christmas"]{
+  --bg:#101813;
+  --bg2:#182b20;
+  --panel:#17251c;
+  --panel2:#24402d;
+  --accent:#b51f32;
+  --accent2:#e8c66a;
+}
+
+body[data-season="epiphany"]{
+  --bg:#101a22;
+  --bg2:#162a36;
+  --panel:#172a35;
+  --panel2:#213c4b;
+  --accent:#d5b65a;
+  --accent2:#f1df9c;
+}
+
+body[data-season="lent"]{
+  --bg:#17131d;
+  --bg2:#282033;
+  --panel:#221b2c;
+  --panel2:#342943;
+  --accent:#76509b;
+  --accent2:#cdb5df;
+}
+
+body[data-season="holyweek"]{
+  --bg:#120f10;
+  --bg2:#251719;
+  --panel:#211719;
+  --panel2:#362124;
+  --accent:#8d2531;
+  --accent2:#d6b9a6;
+}
+
+body[data-season="easter"]{
+  --bg:#1b1810;
+  --bg2:#332b16;
+  --panel:#292414;
+  --panel2:#443b1d;
+  --accent:#e4c654;
+  --accent2:#fff3b0;
+}
+
+body[data-season="pentecost"]{
+  --bg:#1b0d0d;
+  --bg2:#3a1111;
+  --panel:#301313;
+  --panel2:#501b18;
+  --accent:#d43b25;
+  --accent2:#ffc15b;
+}
+
+body[data-season="ordinary"]{
+  --bg:#0e1c16;
+  --bg2:#163326;
+  --panel:#173025;
+  --panel2:#214535;
+  --accent:#4c9a68;
+  --accent2:#b7d8a9;
+}
+
+body[data-season="fall"]{
+  --bg:#17120f;
+  --bg2:#342016;
+  --panel:#2b1d15;
+  --panel2:#4a2d1c;
+  --accent:#c86f2d;
+  --accent2:#efbd72;
+}
+
 </style>
 </head>
+
+
 <body data-season="fall">
+
 <main class="canvas">
-  <section class="left">
-    <section class="panel brand-countdown">
-      <div class="brand">
-        <img class="church-logo" src="data:image/webp;base64,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" alt="Versailles United Methodist Church logo">
+
+
+<!-- =======================================================
+     LEFT SIDE
+     ======================================================= -->
+
+<section class="left">
+
+
+  <!-- LOGO + COUNTDOWN -->
+
+  <section class="panel brand-countdown">
+
+    <div class="brand">
+
+      <img
+        class="church-logo"
+        src="VUMC Logo.webp"
+        alt="Versailles United Methodist Church logo"
+      >
+
+    </div>
+
+
+    <div class="next">
+
+      <div class="next-label">
+        Next Worship
       </div>
-      <div class="next">
-        <div class="next-label">Next Worship</div>
-        <div class="next-name" id="serviceName">Loading worship schedule…</div>
-        <div class="countdown">
-          <div class="count"><b id="days">--</b><span>DAYS</span></div>
-          <div class="count"><b id="hours">--</b><span>HOURS</span></div>
-          <div class="count"><b id="minutes">--</b><span>MIN</span></div>
-          <div class="count"><b id="seconds">--</b><span>SEC</span></div>
+
+      <div
+        class="next-name"
+        id="serviceName"
+      >
+        Loading worship schedule…
+      </div>
+
+
+      <div class="countdown">
+
+        <div class="count">
+          <b id="days">--</b>
+          <span>DAYS</span>
         </div>
+
+        <div class="count">
+          <b id="hours">--</b>
+          <span>HOURS</span>
+        </div>
+
+        <div class="count">
+          <b id="minutes">--</b>
+          <span>MIN</span>
+        </div>
+
+        <div class="count">
+          <b id="seconds">--</b>
+          <span>SEC</span>
+        </div>
+
       </div>
-    </section>
 
-    <section class="panel slides"><div class="frame"><iframe src="https://welcome-center.netlify.app/" title="Versailles UMC Welcome Center" loading="eager"></iframe></div></section>
-    <section class="panel weekly"><iframe src="https://weekly.versaillesumc.org/" title="This Week at Versailles UMC" loading="eager"></iframe></section>
+    </div>
+
   </section>
 
-  <section class="right">
-    <header class="panel header">
-      <div><div class="welcome">Welcome to Versailles UMC</div></div>
-      <div class="meta"><div class="date" id="headerDate"></div><div class="time" id="headerTime"></div></div>
-    </header>
 
-    <!-- IMPORTANT: remains transparent for the vMix/live feed layer -->
-    <section class="video" aria-label="Transparent live video area"><div class="debug">LIVE FEED AREA</div></section>
+  <!-- WELCOME CENTER -->
 
-    <section class="connect">
-      <img alt="Church Center QR code" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fversaillesumc.churchcenter.com%2F">
-      <div class="connect-copy"><small>CONNECT WITH US</small><strong>Church Center</strong><span>Events • Groups • Giving • More — scan to connect</span></div>
-    </section>
+  <section class="panel slides">
 
-    <section class="ticker"><div class="ticker-track" id="tickerText">Welcome to Versailles UMC • A Place for Everyone • Visit the Welcome Center • Connect with us through Church Center • Have a blessed week!</div></section>
+    <div class="frame">
+
+      <iframe
+        src="https://welcome-center.netlify.app/"
+        title="Versailles UMC Welcome Center"
+        loading="eager">
+      </iframe>
+
+    </div>
+
   </section>
+
+
+  <!-- WEEKLY SCHEDULE -->
+
+  <section class="panel weekly">
+
+    <iframe
+      src="https://weekly.versaillesumc.org/"
+      title="This Week at Versailles UMC"
+      loading="eager">
+    </iframe>
+
+  </section>
+
+
+</section>
+
+
+
+<!-- =======================================================
+     RIGHT SIDE
+     ======================================================= -->
+
+<section class="right">
+
+
+  <!-- WELCOME HEADER -->
+
+  <header class="panel header">
+
+    <div>
+
+      <div class="welcome">
+        Welcome to Versailles UMC
+      </div>
+
+    </div>
+
+
+    <div class="meta">
+
+      <div
+        class="date"
+        id="headerDate">
+      </div>
+
+      <div
+        class="time"
+        id="headerTime">
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <!--
+       LIVE VIDEO AREA
+
+       IMPORTANT:
+       Leave this area transparent.
+       vMix/live video occupies this space.
+  -->
+
+  <section
+    class="video"
+    aria-label="Transparent live video area">
+
+    <div class="debug">
+      LIVE FEED AREA
+    </div>
+
+  </section>
+
+
+
+  <!-- CONNECT BANNER -->
+
+  <section class="connect">
+
+
+    <!-- CHURCH CENTER QR -->
+
+    <img
+      alt="Church Center QR code"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fversaillesumc.churchcenter.com%2F"
+    >
+
+
+    <!-- CONNECT -->
+
+    <div class="connect-copy">
+
+      <small>
+        CONNECT WITH US
+      </small>
+
+      <strong>
+        Church Center
+      </strong>
+
+      <span>
+        Events • Groups • Giving • Directory
+      </span>
+
+    </div>
+
+
+    <div
+      class="connect-divider"
+      aria-hidden="true">
+    </div>
+
+
+    <!-- NEW HERE -->
+
+    <div class="new-here">
+
+      <small>
+        NEW HERE?
+      </small>
+
+      <strong>
+        We’d love to meet you.
+      </strong>
+
+      <span>
+        Stop by the Welcome Center
+      </span>
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- TICKER -->
+
+  <section class="ticker">
+
+    <div
+      class="ticker-track"
+      id="tickerText">
+
+      Welcome to Versailles UMC •
+      A Place for Everyone •
+      Visit the Welcome Center •
+      Connect with us through Church Center •
+      Have a blessed week!
+
+    </div>
+
+  </section>
+
+
+</section>
+
 </main>
 
+
+
 <script>
-const pad=n=>String(n).padStart(2,"0");
 
-/*
-  PCO COUNTDOWN
-  -------------
-  Point this at YOUR server-side endpoint. It should return future PCO Calendar
-  events whose Ministry tag is exactly "worship". Do NOT filter on Featured.
+/* =========================================================
+   BASIC UTILITIES
+   ========================================================= */
 
-  Accepted response:
-    [{"title":"Combined Worship","start":"2026-09-27T10:30:00-04:00"}, ...]
+const pad = n =>
+  String(n).padStart(2,"0");
 
-  or:
-    {"events":[ ...same objects... ]}
 
-  Never put PCO credentials in this public index.html.
-*/
-const WORSHIP_API = "/api/worship"; // change only if your endpoint lives elsewhere
-let worshipEvents=[];
+
+/* =========================================================
+   WORSHIP COUNTDOWN
+
+   Eventually:
+
+   /api/worship
+
+   should return future Planning Center Calendar events
+   tagged with the Ministry tag:
+
+   worship
+
+   DO NOT use the Featured tag.
+
+   Example:
+
+   [
+     {
+       "title":"Combined Worship",
+       "start":"2026-09-27T10:30:00-04:00"
+     }
+   ]
+
+   Planning Center credentials should NEVER be placed
+   inside this public index.html.
+   ========================================================= */
+
+const WORSHIP_API = "/api/worship";
+
+let worshipEvents = [];
+
+
+
+/* =========================================================
+   TEMPORARY LOCAL FALLBACK
+
+   Used until /api/worship is connected.
+
+   Normal Sunday:
+   9:30 Traditional
+   10:30 Contemporary
+
+   Once the PCO endpoint works, PCO takes priority.
+   ========================================================= */
 
 function localFallbackWorship(){
-  const now=new Date();
-  const services=[
-    {day:0,hour:9,minute:30,name:"Traditional Worship"},
-    {day:0,hour:10,minute:30,name:"Contemporary Worship"}
-  ];
-  const result=[];
-  for(let week=0;week<3;week++){
-    for(const s of services){
-      const d=new Date(now);
-      const daysAhead=(s.day-now.getDay()+7)%7 + (week*7);
-      d.setDate(now.getDate()+daysAhead);
-      d.setHours(s.hour,s.minute,0,0);
-      if(d>now) result.push({name:s.name,date:d});
+
+  const now = new Date();
+
+  const services = [
+
+    {
+      day:0,
+      hour:9,
+      minute:30,
+      name:"Traditional Worship"
+    },
+
+    {
+      day:0,
+      hour:10,
+      minute:30,
+      name:"Contemporary Worship"
     }
+
+  ];
+
+
+  const result = [];
+
+
+  for(let week=0;week<3;week++){
+
+    for(const s of services){
+
+      const d = new Date(now);
+
+      const daysAhead =
+        (s.day-now.getDay()+7)%7 +
+        (week*7);
+
+      d.setDate(
+        now.getDate()+daysAhead
+      );
+
+      d.setHours(
+        s.hour,
+        s.minute,
+        0,
+        0
+      );
+
+
+      if(d>now){
+
+        result.push({
+
+          name:s.name,
+          date:d
+
+        });
+
+      }
+
+    }
+
   }
-  return result.sort((a,b)=>a.date-b.date);
+
+
+  return result.sort(
+    (a,b)=>a.date-b.date
+  );
+
 }
+
+
+
+/* =========================================================
+   LOAD WORSHIP FROM PCO ENDPOINT
+   ========================================================= */
 
 async function loadWorship(){
+
   try{
-    const r=await fetch(WORSHIP_API,{cache:"no-store"});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const data=await r.json();
-    const rows=Array.isArray(data)?data:(data.events||[]);
-    const apiEvents=rows
-      .map(e=>({name:e.title||e.name||"Worship",date:new Date(e.start||e.starts_at||e.start_at)}))
-      .filter(e=>!Number.isNaN(e.date.getTime()) && e.date>new Date())
-      .sort((a,b)=>a.date-b.date);
-    if(!apiEvents.length) throw new Error("No future worship events returned");
-    worshipEvents=apiEvents;
-  }catch(err){
-    console.warn("Using local worship fallback until PCO endpoint is available:",err);
-    worshipEvents=localFallbackWorship();
+
+    const r =
+      await fetch(
+        WORSHIP_API,
+        {
+          cache:"no-store"
+        }
+      );
+
+
+    if(!r.ok){
+
+      throw new Error(
+        "HTTP "+r.status
+      );
+
+    }
+
+
+    const data =
+      await r.json();
+
+
+    const rows =
+      Array.isArray(data)
+        ? data
+        : (data.events || []);
+
+
+    const apiEvents =
+      rows
+
+      .map(e=>({
+
+        name:
+          e.title ||
+          e.name ||
+          "Worship",
+
+        date:
+          new Date(
+            e.start ||
+            e.starts_at ||
+            e.start_at
+          )
+
+      }))
+
+      .filter(e=>
+
+        !Number.isNaN(
+          e.date.getTime()
+        )
+
+        &&
+
+        e.date > new Date()
+
+      )
+
+      .sort(
+        (a,b)=>a.date-b.date
+      );
+
+
+    if(!apiEvents.length){
+
+      throw new Error(
+        "No future worship events returned"
+      );
+
+    }
+
+
+    worshipEvents =
+      apiEvents;
+
   }
+
+
+  catch(err){
+
+    console.warn(
+      "Using local worship fallback until PCO endpoint is available:",
+      err
+    );
+
+
+    worshipEvents =
+      localFallbackWorship();
+
+  }
+
+
   updateCountdown();
+
 }
+
+
+
+/* =========================================================
+   UPDATE COUNTDOWN
+
+   As soon as an event begins, it moves to the NEXT
+   future worship event.
+
+   There is intentionally no:
+   "Worship is happening now"
+   state.
+   ========================================================= */
+
 function updateCountdown(){
-  const now=new Date();
-  const next=worshipEvents.find(e=>e.date>now);
+
+  const now =
+    new Date();
+
+
+  const next =
+    worshipEvents.find(
+      e=>e.date>now
+    );
+
+
   if(!next){
-    document.getElementById("serviceName").textContent="Checking upcoming worship…";
-    ["days","hours","minutes","seconds"].forEach(id=>document.getElementById(id).textContent="--");
+
+    document
+      .getElementById("serviceName")
+      .textContent =
+      "Checking upcoming worship…";
+
+
+    [
+      "days",
+      "hours",
+      "minutes",
+      "seconds"
+
+    ].forEach(id=>
+
+      document
+        .getElementById(id)
+        .textContent="--"
+
+    );
+
+
     return;
+
   }
-  const s=Math.floor((next.date-now)/1000);
-  document.getElementById("serviceName").textContent =
-    `${next.name} • ${next.date.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})} • ${next.date.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`;
-  document.getElementById("days").textContent=pad(Math.floor(s/86400));
-  document.getElementById("hours").textContent=pad(Math.floor((s%86400)/3600));
-  document.getElementById("minutes").textContent=pad(Math.floor((s%3600)/60));
-  document.getElementById("seconds").textContent=pad(s%60);
+
+
+  const s =
+    Math.floor(
+      (next.date-now)/1000
+    );
+
+
+  document
+    .getElementById("serviceName")
+    .textContent =
+
+      `${next.name} • ` +
+
+      next.date.toLocaleDateString(
+        "en-US",
+        {
+          weekday:"short",
+          month:"short",
+          day:"numeric"
+        }
+      )
+
+      + " • " +
+
+      next.date.toLocaleTimeString(
+        "en-US",
+        {
+          hour:"numeric",
+          minute:"2-digit"
+        }
+      );
+
+
+  document
+    .getElementById("days")
+    .textContent =
+    pad(
+      Math.floor(
+        s/86400
+      )
+    );
+
+
+  document
+    .getElementById("hours")
+    .textContent =
+    pad(
+      Math.floor(
+        (s%86400)/3600
+      )
+    );
+
+
+  document
+    .getElementById("minutes")
+    .textContent =
+    pad(
+      Math.floor(
+        (s%3600)/60
+      )
+    );
+
+
+  document
+    .getElementById("seconds")
+    .textContent =
+    pad(
+      s%60
+    );
+
 }
 
-/* Automatic liturgical/seasonal appearance.
-   Movable dates are calculated from Easter; Advent begins four Sundays before Christmas.
-   Fall is used Sep 1 until Advent, while major liturgical seasons take priority. */
+
+
+/* =========================================================
+   EASTER CALCULATION
+   ========================================================= */
+
 function easterDate(year){
-  const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
-  const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
-  const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
-  const month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
-  return new Date(year,month-1,day);
+
+  const a=year%19;
+  const b=Math.floor(year/100);
+  const c=year%100;
+  const d=Math.floor(b/4);
+  const e=b%4;
+  const f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3);
+
+  const h=
+    (19*a+b-d-g+15)%30;
+
+  const i=
+    Math.floor(c/4);
+
+  const k=
+    c%4;
+
+  const l=
+    (32+2*e+2*i-h-k)%7;
+
+  const m=
+    Math.floor(
+      (a+11*h+22*l)/451
+    );
+
+  const month=
+    Math.floor(
+      (h+l-7*m+114)/31
+    );
+
+  const day=
+    ((h+l-7*m+114)%31)+1;
+
+
+  return new Date(
+    year,
+    month-1,
+    day
+  );
+
 }
-function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);x.setHours(0,0,0,0);return x}
+
+
+
+function addDays(d,n){
+
+  const x =
+    new Date(d);
+
+  x.setDate(
+    x.getDate()+n
+  );
+
+  x.setHours(
+    0,0,0,0
+  );
+
+  return x;
+
+}
+
+
+
+/* =========================================================
+   ADVENT CALCULATION
+   ========================================================= */
+
 function adventStart(year){
-  const christmas=new Date(year,11,25); const d=new Date(christmas);
-  d.setDate(christmas.getDate()-((christmas.getDay()+21)%7)-21);
-  // Ensure four Sundays before Christmas: Sunday falling Nov 27-Dec 3.
-  while(!(d.getDay()===0 && d.getMonth()===10 && d.getDate()>=27) &&
-        !(d.getDay()===0 && d.getMonth()===11 && d.getDate()<=3)) d.setDate(d.getDate()-1);
+
+  const christmas =
+    new Date(
+      year,
+      11,
+      25
+    );
+
+
+  const d =
+    new Date(christmas);
+
+
+  d.setDate(
+
+    christmas.getDate()
+
+    -
+
+    ((christmas.getDay()+21)%7)
+
+    -
+
+    21
+
+  );
+
+
+  while(
+
+    !(
+      d.getDay()===0 &&
+      d.getMonth()===10 &&
+      d.getDate()>=27
+    )
+
+    &&
+
+    !(
+      d.getDay()===0 &&
+      d.getMonth()===11 &&
+      d.getDate()<=3
+    )
+
+  ){
+
+    d.setDate(
+      d.getDate()-1
+    );
+
+  }
+
+
   return d;
-}
-function chooseSeason(now=new Date()){
-  const y=now.getFullYear(),today=new Date(y,now.getMonth(),now.getDate());
-  const easter=easterDate(y),ash=addDays(easter,-46),palm=addDays(easter,-7),pentecost=addDays(easter,49);
-  const advent=adventStart(y),christmas=new Date(y,11,25),jan6=new Date(y,0,6);
 
-  if(today>=advent && today<christmas) return ["advent","Advent at Versailles UMC"];
-  if(today>=christmas || today<jan6) return ["christmas","Christmas at Versailles UMC"];
-  if(today>=jan6 && today<ash) return ["epiphany","Season of Epiphany"];
-  if(today>=ash && today<palm) return ["lent","Season of Lent"];
-  if(today>=palm && today<easter) return ["holyweek","Holy Week"];
-  if(today>=easter && today<addDays(easter,7)) return ["easter","Easter at Versailles UMC"];
-  if(today.getTime()===pentecost.getTime()) return ["pentecost","Pentecost Sunday"];
-  if(today>=new Date(y,8,1) && today<advent) return ["fall","Fall at Versailles UMC"];
-  return ["ordinary","Season of Discipleship"];
 }
+
+
+
+/* =========================================================
+   AUTOMATIC SEASON SELECTION
+
+   These values control DESIGN ONLY.
+   They are NOT displayed to visitors.
+   ========================================================= */
+
+function chooseSeason(
+  now=new Date()
+){
+
+  const y =
+    now.getFullYear();
+
+
+  const today =
+    new Date(
+      y,
+      now.getMonth(),
+      now.getDate()
+    );
+
+
+  const easter =
+    easterDate(y);
+
+
+  const ash =
+    addDays(
+      easter,
+      -46
+    );
+
+
+  const palm =
+    addDays(
+      easter,
+      -7
+    );
+
+
+  const pentecost =
+    addDays(
+      easter,
+      49
+    );
+
+
+  const advent =
+    adventStart(y);
+
+
+  const christmas =
+    new Date(
+      y,
+      11,
+      25
+    );
+
+
+  const jan6 =
+    new Date(
+      y,
+      0,
+      6
+    );
+
+
+
+  if(
+    today>=advent &&
+    today<christmas
+  ){
+
+    return "advent";
+
+  }
+
+
+  if(
+    today>=christmas ||
+    today<jan6
+  ){
+
+    return "christmas";
+
+  }
+
+
+  if(
+    today>=jan6 &&
+    today<ash
+  ){
+
+    return "epiphany";
+
+  }
+
+
+  if(
+    today>=ash &&
+    today<palm
+  ){
+
+    return "lent";
+
+  }
+
+
+  if(
+    today>=palm &&
+    today<easter
+  ){
+
+    return "holyweek";
+
+  }
+
+
+  if(
+    today>=easter &&
+    today<addDays(easter,7)
+  ){
+
+    return "easter";
+
+  }
+
+
+  if(
+    today.getTime() ===
+    pentecost.getTime()
+  ){
+
+    return "pentecost";
+
+  }
+
+
+  if(
+    today>=new Date(y,8,1) &&
+    today<advent
+  ){
+
+    return "fall";
+
+  }
+
+
+  return "ordinary";
+
+}
+
+
+
+/* =========================================================
+   APPLY SEASON
+
+   Notice:
+   Nothing is written to the screen.
+   The season is ONLY a hidden CSS state.
+   ========================================================= */
+
 function applySeason(){
-  const [key,label]=chooseSeason();
-  document.body.dataset.season=key;
-}
-function updateClock(){
-  const now=new Date();
-  document.getElementById("headerDate").textContent=now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
-  document.getElementById("headerTime").textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
-}
-const params=new URLSearchParams(location.search);
-if(params.get("debug")==="1")document.body.classList.add("debug");
-if(params.get("ticker"))document.getElementById("tickerText").textContent=params.get("ticker");
 
-applySeason(); updateClock(); loadWorship();
-setInterval(updateCountdown,1000);
-setInterval(updateClock,1000);
-setInterval(loadWorship,5*60*1000);
-setInterval(applySeason,60*60*1000);
+  document.body.dataset.season =
+    chooseSeason();
+
+}
+
+
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+
+function updateClock(){
+
+  const now =
+    new Date();
+
+
+  document
+    .getElementById("headerDate")
+    .textContent =
+
+    now.toLocaleDateString(
+      "en-US",
+      {
+        weekday:"long",
+        month:"long",
+        day:"numeric"
+      }
+    );
+
+
+  document
+    .getElementById("headerTime")
+    .textContent =
+
+    now.toLocaleTimeString(
+      "en-US",
+      {
+        hour:"numeric",
+        minute:"2-digit"
+      }
+    );
+
+}
+
+
+
+/* =========================================================
+   OPTIONAL URL CONTROLS
+
+   ?debug=1
+   Shows outline of live-feed area.
+
+   ?ticker=Your Message
+   Temporarily replaces ticker text.
+   ========================================================= */
+
+const params =
+  new URLSearchParams(
+    location.search
+  );
+
+
+if(
+  params.get("debug")==="1"
+){
+
+  document.body
+    .classList
+    .add("debug");
+
+}
+
+
+if(
+  params.get("ticker")
+){
+
+  document
+    .getElementById("tickerText")
+    .textContent =
+    params.get("ticker");
+
+}
+
+
+
+/* =========================================================
+   START DISPLAY
+   ========================================================= */
+
+applySeason();
+
+updateClock();
+
+loadWorship();
+
+
+setInterval(
+  updateCountdown,
+  1000
+);
+
+
+setInterval(
+  updateClock,
+  1000
+);
+
+
+setInterval(
+  loadWorship,
+  5*60*1000
+);
+
+
+setInterval(
+  applySeason,
+  60*60*1000
+);
+
 </script>
+
 </body>
 </html>
