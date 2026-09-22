@@ -1,576 +1,228 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Versailles UMC Atrium Display</title>
-  <style>
-    :root {
-      --bg: #07111f;
-      --panel: #142844;
-      --panel-2: #1c3557;
-      --border: rgba(157, 188, 225, 0.33);
-      --text: #ffffff;
-      --muted: #d7e0eb;
-      --gold: #f6c453;
-      --red: #a40d0d;
-      --blue: #101fb2;
-      --gap: 16px;
-      --radius: 18px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Versailles UMC Atrium Display</title>
+<style>
+:root{
+  --bg:#17120f; --bg2:#2a1b13; --panel:rgba(42,28,20,.92);
+  --panel2:rgba(62,39,25,.94); --accent:#d89245; --accent2:#f1c77e;
+  --text:#fffaf1; --muted:#e3d7c9; --line:rgba(255,235,205,.18);
+  --logo-red:#a91e2c; --radius:18px; --gap:14px;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:transparent}
+body{background:var(--bg)}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle at 7% 8%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 24%),
+    radial-gradient(circle at 94% 92%,color-mix(in srgb,var(--accent2) 13%,transparent),transparent 28%),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+}
+.canvas{
+  position:relative;z-index:1;width:100vw;height:100vh;min-width:1280px;min-height:720px;
+  padding:14px;display:grid;grid-template-columns:38% 1fr;gap:var(--gap);
+}
+.left{display:grid;grid-template-rows:126px minmax(0,1fr) 224px;gap:var(--gap);min-height:0}
+.right{display:grid;grid-template-rows:106px minmax(0,1fr) 104px 42px;gap:var(--gap);min-height:0}
+.panel{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.16)}
+.brand-countdown{display:grid;grid-template-columns:42% 58%;position:relative}
+.brand-countdown::after{content:"";position:absolute;left:42%;top:17px;bottom:17px;width:1px;background:var(--line)}
+.brand{display:flex;align-items:center;padding:15px 18px;gap:13px}
+.crossmark{width:58px;height:58px;border-radius:16px;background:linear-gradient(145deg,var(--logo-red),#70101a);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:44px;font-weight:bold;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.brand-name{font-family:Georgia,serif;font-size:28px;line-height:.94}
+.brand-name small{display:block;margin-top:7px;font-family:Arial,sans-serif;font-size:10px;letter-spacing:.16em;font-weight:800}
+.tagline{font-size:12px;color:var(--accent2);font-style:italic;margin-top:6px}
+.next{padding:13px 16px 11px}
+.next-label{font-size:10px;letter-spacing:.18em;font-weight:900;color:var(--accent2);text-transform:uppercase}
+.next-name{font-size:17px;font-weight:900;margin:5px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.count{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;text-align:center;padding:5px 2px}
+.count b{display:block;font-size:20px;line-height:1}.count span{display:block;margin-top:4px;font-size:8px;letter-spacing:.08em;color:var(--muted)}
+.slides{padding:8px}.frame{height:100%;overflow:hidden;border-radius:13px;background:#111}.frame iframe{width:100%;height:100%;border:0;display:block}
+.weekly{border-radius:var(--radius)}.weekly iframe{width:100%;height:100%;border:0;display:block;background:transparent}
+.header{display:grid;grid-template-columns:1fr auto;align-items:center;padding:13px 22px;position:relative}
+.header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent)}
+.season{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);font-weight:900}
+.welcome{font-family:Georgia,serif;font-size:29px;margin-top:5px}
+.meta{text-align:right}.date{font-size:16px;font-weight:800}.time{font-size:29px;font-weight:900;color:var(--accent2)}
+.video{position:relative;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:hidden}
+.debug{display:none;position:absolute;inset:0;align-items:center;justify-content:center;border:2px dashed var(--accent);color:var(--accent2);background:rgba(0,0,0,.25);font-size:28px;font-weight:900}
+body.debug .debug{display:flex}
+.connect{display:grid;grid-template-columns:104px 1fr;background:#fff;color:#1d1713;border-radius:var(--radius)}
+.connect img{width:104px;height:104px;padding:7px}
+.connect-copy{display:flex;flex-direction:column;justify-content:center;padding:10px 20px;background:linear-gradient(120deg,#fffaf2,#eadfce)}
+.connect-copy small{color:#7b4b26;font-weight:900;letter-spacing:.12em}.connect-copy strong{font-size:26px;color:#261a13;margin-top:3px}.connect-copy span{font-size:13px;color:#624d3d;margin-top:3px}
+.ticker{display:flex;align-items:center;overflow:hidden;white-space:nowrap;border-radius:12px;background:rgba(0,0,0,.32);border:1px solid var(--line);font-size:16px}
+.ticker-track{display:inline-block;min-width:max-content;padding-left:100%;animation:ticker 30s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 
-    * {
-      box-sizing: border-box;
-    }
+/* Seasonal decorative wash; deliberately stays OUT of the transparent live-video region. */
+.canvas::after{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.18;background:radial-gradient(circle at 0 100%,var(--accent),transparent 22%)}
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: transparent;
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-    }
-
-    body {
-      background: var(--bg);
-    }
-
-    .canvas {
-      width: 100vw;
-      height: 100vh;
-      min-width: 1280px;
-      min-height: 720px;
-      padding: 16px;
-      display: grid;
-      grid-template-columns: 38% 1fr;
-      grid-template-rows: 1fr 116px 42px;
-      gap: 12px 16px;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(39, 73, 116, 0.16), transparent 38%),
-        linear-gradient(180deg, #07111f 0%, #081421 100%);
-    }
-
-    .panel {
-      background: linear-gradient(145deg, rgba(27, 54, 89, 0.96), rgba(14, 34, 59, 0.98));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    }
-
-    /* LEFT STACK */
-    .left-stack {
-      grid-column: 1;
-      grid-row: 1 / 4;
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-      gap: 10px;
-      min-height: 0;
-    }
-
-    .welcome-card {
-      position: relative;
-      overflow: hidden;
-      padding: 17px 17px 14px;
-      background:
-        radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.10), transparent 30%),
-        linear-gradient(135deg, #8b1e2d 0%, #6f1623 55%, #4d0f18 100%);
-      border-color: rgba(255, 224, 170, 0.28);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
-    }
-
-    .welcome-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #f0c36b, #fff0bd, #f0c36b);
-    }
-
-    .welcome-card .service-label,
-    .welcome-card .count-label {
-      color: rgba(255, 255, 255, 0.78);
-    }
-
-    .welcome-card .count-box {
-      background: rgba(255, 255, 255, 0.10);
-      border-color: rgba(255, 255, 255, 0.16);
-    }
-
-
-    .eyebrow {
-      color: var(--gold);
-      font-size: clamp(15px, 1.05vw, 22px);
-      font-weight: 900;
-      letter-spacing: .11em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .datetime-line {
-      display: block;
-      width: 100%;
-      margin: 0;
-      font-size: clamp(17px, 1.3vw, 25px);
-      line-height: 1.15;
-      font-weight: 850;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .service-label {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: clamp(12px, .82vw, 16px);
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .countdown {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-      margin-top: 8px;
-    }
-
-    .count-box {
-      min-width: 0;
-      text-align: center;
-      padding: 9px 4px 8px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-    }
-
-    .count-value {
-      font-size: clamp(21px, 1.75vw, 35px);
-      line-height: 1;
-      font-weight: 900;
-    }
-
-    .count-label {
-      display: block;
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: clamp(10px, .77vw, 15px);
-      font-weight: 800;
-      letter-spacing: .03em;
-      white-space: nowrap;
-    }
-
-    .slideshow-panel {
-      padding: 10px;
-      min-height: 0;
-    }
-
-    .frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 7.6;
-      overflow: hidden;
-      border-radius: 15px;
-      background: #c8092d;
-    }
-
-    .frame iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-      background: transparent;
-    }
-
-
-    /* WEEKLY */
-    .weekly-panel {
-      grid-column: 1;
-      grid-row: auto;
-      min-height: 0;
-      display: grid;
-      grid-template-rows: 1fr;
-      overflow: hidden;
-      border-radius: 0;
-    }
-
-
-    .weekly-viewport {
-      position: relative;
-      overflow: hidden;
-      min-height: 0;
-      border-radius: 0;
-      background: linear-gradient(145deg, rgba(27, 54, 89, 0.98), rgba(14, 34, 59, 0.99));
-    }
-
-    /*
-      The iframe receives a wider virtual viewport and is scaled back down.
-      This keeps event names and times closer together and greatly reduces wrapping.
-    */
-    .weekly-viewport iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      transform: none;
-      transform-origin: top left;
-      background: transparent;
-    }
-
-    .weekly-time {
-      border-top: 1px solid rgba(255,255,255,0.18);
-      padding: 13px 19px;
-      background: rgba(9, 26, 47, 0.96);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .weekly-time strong {
-      font-size: clamp(27px, 2vw, 40px);
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .weekly-time span {
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: clamp(13px, .9vw, 18px);
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-
-    .right-stack {
-      grid-column: 2;
-      grid-row: 1 / 4;
-      display: grid;
-      grid-template-rows: 92px minmax(0, 1fr) 116px 42px;
-      gap: 12px;
-      min-width: 0;
-      min-height: 0;
-    }
-
-    .video-header {
-      display:flex;
-      flex-direction:column;
-      padding:0;
-      overflow:hidden;
-      background:#fff;
-    }
-
-    .video-info-row{
-      height:42px;
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      align-items:center;
-      background:linear-gradient(180deg,#7b2334,#641a29);
-      color:#fff;
-      font-size:18px;
-      font-weight:700;
-      padding:0 18px;
-    }
-
-    .video-date,.video-time,.video-weather{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:8px;
-      white-space:nowrap;
-    }
-
-    .video-title{
-      flex:1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#7b2334;
-      font-size:34px;
-      font-weight:800;
-      letter-spacing:.3px;
-      background:#fff;
-    }
-
-    /* VIDEO REGION */
-    .video-window {
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
-      position: relative;
-      min-height: 0;
-      background: transparent;
-      overflow: hidden;
-    }
-
-    .video-window::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      border-radius: inherit;
-    }
-
-    .debug-label {
-      display: none;
-      position: absolute;
-      inset: 0;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: rgba(255,255,255,.45);
-      font-size: clamp(24px, 2vw, 42px);
-      line-height: 1.4;
-      background: linear-gradient(145deg, rgba(30,30,30,.7), rgba(12,12,12,.82));
-    }
-
-    body.debug .debug-label {
-      display: flex;
-    }
-
-    /* QR LOWER THIRD */
-    .qr-bar {
-      display: grid;
-      grid-template-columns: 116px 1fr;
-      min-height: 0;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.8);
-      background: white;
-    }
-
-    .qr-code {
-      width: 116px;
-      height: 116px;
-      object-fit: cover;
-      background: white;
-      padding: 5px;
-      border-right: 2px solid #ddd;
-    }
-
-    .qr-copy {
-      display: grid;
-      grid-template-rows: 40px 1fr;
-      min-width: 0;
-    }
-
-    .qr-top {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, #1829c6, #09158f);
-      color: white;
-      font-size: clamp(18px, 1.25vw, 25px);
-      white-space: nowrap;
-      padding: 0 18px;
-    }
-
-    .qr-main {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: black;
-      font-weight: 900;
-      font-size: clamp(28px, 2vw, 43px);
-      white-space: nowrap;
-      padding: 0 18px;
-      background: linear-gradient(180deg, #ffffff, #dedede);
-    }
-
-    .ticker {
-      border: 1px solid rgba(255,255,255,0.8);
-      background: linear-gradient(180deg, #4b4b4b, #262626);
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      white-space: nowrap;
-      font-size: clamp(16px, 1.15vw, 23px);
-    }
-
-    .ticker-track {
-      display: inline-block;
-      min-width: max-content;
-      padding-left: 100%;
-      animation: ticker 28s linear infinite;
-    }
-
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to { transform: translateX(-100%); }
-    }
-
-  </style>
+/* Themes */
+body[data-season="advent"]{--bg:#17101e;--bg2:#291536;--panel:#261832;--panel2:#392047;--accent:#8b63b8;--accent2:#e1c8f3}
+body[data-season="christmas"]{--bg:#101813;--bg2:#182b20;--panel:#17251c;--panel2:#24402d;--accent:#b51f32;--accent2:#e8c66a}
+body[data-season="epiphany"]{--bg:#101a22;--bg2:#162a36;--panel:#172a35;--panel2:#213c4b;--accent:#d5b65a;--accent2:#f1df9c}
+body[data-season="lent"]{--bg:#17131d;--bg2:#282033;--panel:#221b2c;--panel2:#342943;--accent:#76509b;--accent2:#cdb5df}
+body[data-season="holyweek"]{--bg:#120f10;--bg2:#251719;--panel:#211719;--panel2:#362124;--accent:#8d2531;--accent2:#d6b9a6}
+body[data-season="easter"]{--bg:#1b1810;--bg2:#332b16;--panel:#292414;--panel2:#443b1d;--accent:#e4c654;--accent2:#fff3b0}
+body[data-season="pentecost"]{--bg:#1b0d0d;--bg2:#3a1111;--panel:#301313;--panel2:#501b18;--accent:#d43b25;--accent2:#ffc15b}
+body[data-season="ordinary"]{--bg:#0e1c16;--bg2:#163326;--panel:#173025;--panel2:#214535;--accent:#4c9a68;--accent2:#b7d8a9}
+body[data-season="fall"]{--bg:#17120f;--bg2:#342016;--panel:#2b1d15;--panel2:#4a2d1c;--accent:#c86f2d;--accent2:#efbd72}
+</style>
 </head>
-<body>
-  <main class="canvas">
-    <section class="left-stack">
-      <article class="panel welcome-card">
-<div class="service-label">
-          Next Event: <span id="serviceName">Traditional Worship</span>
+<body data-season="fall">
+<main class="canvas">
+  <section class="left">
+    <section class="panel brand-countdown">
+      <div class="brand">
+        <div class="crossmark">†</div>
+        <div><div class="brand-name">Versailles<small>UNITED METHODIST CHURCH</small></div><div class="tagline">A Place for Everyone</div></div>
+      </div>
+      <div class="next">
+        <div class="next-label">Next Worship</div>
+        <div class="next-name" id="serviceName">Loading worship schedule…</div>
+        <div class="countdown">
+          <div class="count"><b id="days">--</b><span>DAYS</span></div>
+          <div class="count"><b id="hours">--</b><span>HOURS</span></div>
+          <div class="count"><b id="minutes">--</b><span>MIN</span></div>
+          <div class="count"><b id="seconds">--</b><span>SEC</span></div>
         </div>
-
-        <div class="countdown" aria-label="Countdown to the next service">
-          <div class="count-box">
-            <div class="count-value" id="days">00</div>
-            <span class="count-label">DAYS</span>
-          </div>
-          <div class="count-box">
-            <div class="count-value" id="hours">00</div>
-            <span class="count-label">HOURS</span>
-          </div>
-          <div class="count-box">
-            <div class="count-value" id="minutes">00</div>
-            <span class="count-label">MINUTES</span>
-          </div>
-          <div class="count-box">
-            <div class="count-value" id="seconds">00</div>
-            <span class="count-label">SECONDS</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="panel slideshow-panel">
-        <div class="frame">
-          <iframe
-            src="https://welcome-center.netlify.app/"
-            title="Versailles UMC Welcome Center"
-            loading="eager">
-          </iframe>
-        </div>
-      </article>
-
-      
-    <section class="panel weekly-panel">
-      <div class="weekly-viewport">
-        <iframe
-          src="https://weekly.versaillesumc.org/"
-          title="This Week at Versailles UMC"
-          loading="eager">
-        </iframe>
       </div>
     </section>
 
+    <section class="panel slides"><div class="frame"><iframe src="https://welcome-center.netlify.app/" title="Versailles UMC Welcome Center" loading="eager"></iframe></div></section>
+    <section class="panel weekly"><iframe src="https://weekly.versaillesumc.org/" title="This Week at Versailles UMC" loading="eager"></iframe></section>
+  </section>
+
+  <section class="right">
+    <header class="panel header">
+      <div><div class="season" id="seasonLabel">Fall at Versailles UMC</div><div class="welcome">Welcome to Versailles UMC</div></div>
+      <div class="meta"><div class="date" id="headerDate"></div><div class="time" id="headerTime"></div></div>
+    </header>
+
+    <!-- IMPORTANT: remains transparent for the vMix/live feed layer -->
+    <section class="video" aria-label="Transparent live video area"><div class="debug">LIVE FEED AREA</div></section>
+
+    <section class="connect">
+      <img alt="Church Center QR code" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fversaillesumc.churchcenter.com%2F">
+      <div class="connect-copy"><small>CONNECT WITH US</small><strong>Church Center</strong><span>Events • Groups • Giving • More — scan to connect</span></div>
     </section>
 
-    <section class="right-stack">
-      <header class="panel video-header">
+    <section class="ticker"><div class="ticker-track" id="tickerText">Welcome to Versailles UMC • A Place for Everyone • Visit the Welcome Center • Connect with us through Church Center • Have a blessed week!</div></section>
+  </section>
+</main>
 
-        <div class="video-info-row">
-          <div class="video-date">📅 <span id="headerDate"></span></div>
-          <div class="video-time">🕒 <span id="headerTime"></span></div>
-          <div class="video-weather">☀️ <span id="headerWeather">78° Partly Cloudy</span></div>
-        </div>
+<script>
+const pad=n=>String(n).padStart(2,"0");
 
-        <div class="video-title">
-          Welcome to Versailles United Methodist Church
-        </div>
+/*
+  PCO COUNTDOWN
+  -------------
+  Point this at YOUR server-side endpoint. It should return future PCO Calendar
+  events whose Ministry tag is exactly "worship". Do NOT filter on Featured.
 
-      </header>
+  Accepted response:
+    [{"title":"Combined Worship","start":"2026-09-27T10:30:00-04:00"}, ...]
 
-      <section class="video-window" aria-label="Transparent video area">
-      <div class="debug-label">
-        VIDEO INPUT<br />
-        <small>(vMix transparent layer)</small>
-      </div>
-    </section>
+  or:
+    {"events":[ ...same objects... ]}
 
-    <section class="qr-bar">
-      <img
-        class="qr-code"
-        alt="Church Center QR code"
-        src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fversaillesumc.churchcenter.com%2F"
-      />
-      <div class="qr-copy">
-        <div class="qr-top">Download Church Center to Connect With Us</div>
-        <div class="qr-main">Scan the QR code to download</div>
-      </div>
-    </section>
+  Never put PCO credentials in this public index.html.
+*/
+const WORSHIP_API = "/api/worship"; // change only if your endpoint lives elsewhere
+let worshipEvents=[];
 
-      <section class="ticker" aria-label="Church information ticker">
-        <div class="ticker-track" id="tickerText">
-          Welcome! • Join us Sunday at 9:30 &amp; 10:30 • Arrive early? Enjoy a hot cup of coffee and donut before worship while you wait. • Download Church Center • Visit the Welcome Center • Have a blessed week!
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <script>
-    const pad = value => String(value).padStart(2, "0");
-
-    function getNextService(now) {
-      const services = [
-        { day: 0, hour: 9, minute: 30, name: "Traditional Worship" },
-        { day: 0, hour: 10, minute: 30, name: "Contemporary Worship" }
-      ];
-
-      const candidates = [];
-
-      for (const service of services) {
-        const date = new Date(now);
-        const daysAhead = (service.day - now.getDay() + 7) % 7;
-        date.setDate(now.getDate() + daysAhead);
-        date.setHours(service.hour, service.minute, 0, 0);
-
-        if (date <= now) {
-          date.setDate(date.getDate() + 7);
-        }
-
-        candidates.push({ ...service, date });
-      }
-
-      return candidates.sort((a, b) => a.date - b.date)[0];
-    }
-
-    function updateCountdown() {
-      const now = new Date();
-      const next = getNextService(now);
-      const diff = Math.max(0, next.date - now);
-
-      const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      document.getElementById("serviceName").textContent = next.name;
-      document.getElementById("days").textContent = pad(days);
-      document.getElementById("hours").textContent = pad(hours);
-      document.getElementById("minutes").textContent = pad(minutes);
-      document.getElementById("seconds").textContent = pad(seconds);
-    }
-
-    function updateClock() {
-      const now = new Date();
-document.getElementById("headerDate").textContent =
-        now.toLocaleDateString("en-US",{
-          weekday:"long",
-          month:"long",
-          day:"numeric"
-        });
-
-      document.getElementById("headerTime").textContent =
-        now.toLocaleTimeString("en-US",{
-          hour:"numeric",
-          minute:"2-digit"
-        });
-    }
-
-    const params = new URLSearchParams(location.search);
-    if (params.get("debug") === "1") {
-      document.body.classList.add("debug");
-    }
-
-    const customTicker = params.get("ticker");
-    if (customTicker) {
-      document.getElementById("tickerText").textContent = customTicker;
-    }
-
+async function loadWorship(){
+  try{
+    const r=await fetch(WORSHIP_API,{cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const data=await r.json();
+    const rows=Array.isArray(data)?data:(data.events||[]);
+    worshipEvents=rows
+      .map(e=>({name:e.title||e.name||"Worship",date:new Date(e.start||e.starts_at||e.start_at)}))
+      .filter(e=>!Number.isNaN(e.date.getTime()))
+      .sort((a,b)=>a.date-b.date);
     updateCountdown();
-    updateClock();
-    setInterval(updateCountdown, 1000);
-    setInterval(updateClock, 1000);
-  </script>
+  }catch(err){
+    console.warn("Worship schedule unavailable:",err);
+    document.getElementById("serviceName").textContent="Worship schedule unavailable";
+  }
+}
+
+function updateCountdown(){
+  const now=new Date();
+  const next=worshipEvents.find(e=>e.date>now);
+  if(!next){
+    document.getElementById("serviceName").textContent="Checking upcoming worship…";
+    ["days","hours","minutes","seconds"].forEach(id=>document.getElementById(id).textContent="--");
+    return;
+  }
+  const s=Math.floor((next.date-now)/1000);
+  document.getElementById("serviceName").textContent =
+    `${next.name} • ${next.date.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})} • ${next.date.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`;
+  document.getElementById("days").textContent=pad(Math.floor(s/86400));
+  document.getElementById("hours").textContent=pad(Math.floor((s%86400)/3600));
+  document.getElementById("minutes").textContent=pad(Math.floor((s%3600)/60));
+  document.getElementById("seconds").textContent=pad(s%60);
+}
+
+/* Automatic liturgical/seasonal appearance.
+   Movable dates are calculated from Easter; Advent begins four Sundays before Christmas.
+   Fall is used Sep 1 until Advent, while major liturgical seasons take priority. */
+function easterDate(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+  const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month-1,day);
+}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);x.setHours(0,0,0,0);return x}
+function adventStart(year){
+  const christmas=new Date(year,11,25); const d=new Date(christmas);
+  d.setDate(christmas.getDate()-((christmas.getDay()+21)%7)-21);
+  // Ensure four Sundays before Christmas: Sunday falling Nov 27-Dec 3.
+  while(!(d.getDay()===0 && d.getMonth()===10 && d.getDate()>=27) &&
+        !(d.getDay()===0 && d.getMonth()===11 && d.getDate()<=3)) d.setDate(d.getDate()-1);
+  return d;
+}
+function chooseSeason(now=new Date()){
+  const y=now.getFullYear(),today=new Date(y,now.getMonth(),now.getDate());
+  const easter=easterDate(y),ash=addDays(easter,-46),palm=addDays(easter,-7),pentecost=addDays(easter,49);
+  const advent=adventStart(y),christmas=new Date(y,11,25),jan6=new Date(y,0,6);
+
+  if(today>=advent && today<christmas) return ["advent","Advent at Versailles UMC"];
+  if(today>=christmas || today<jan6) return ["christmas","Christmas at Versailles UMC"];
+  if(today>=jan6 && today<ash) return ["epiphany","Season of Epiphany"];
+  if(today>=ash && today<palm) return ["lent","Season of Lent"];
+  if(today>=palm && today<easter) return ["holyweek","Holy Week"];
+  if(today>=easter && today<addDays(easter,7)) return ["easter","Easter at Versailles UMC"];
+  if(today.getTime()===pentecost.getTime()) return ["pentecost","Pentecost Sunday"];
+  if(today>=new Date(y,8,1) && today<advent) return ["fall","Fall at Versailles UMC"];
+  return ["ordinary","Season of Discipleship"];
+}
+function applySeason(){
+  const [key,label]=chooseSeason();
+  document.body.dataset.season=key;
+  document.getElementById("seasonLabel").textContent=label;
+}
+function updateClock(){
+  const now=new Date();
+  document.getElementById("headerDate").textContent=now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  document.getElementById("headerTime").textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+}
+const params=new URLSearchParams(location.search);
+if(params.get("debug")==="1")document.body.classList.add("debug");
+if(params.get("ticker"))document.getElementById("tickerText").textContent=params.get("ticker");
+
+applySeason(); updateClock(); loadWorship();
+setInterval(updateCountdown,1000);
+setInterval(updateClock,1000);
+setInterval(loadWorship,5*60*1000);
+setInterval(applySeason,60*60*1000);
+</script>
 </body>
 </html>
