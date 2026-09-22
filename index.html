@@ -43,8 +43,8 @@ body::before{
 .header{display:grid;grid-template-columns:1fr auto;align-items:center;padding:13px 22px;position:relative}
 .header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent)}
 .season{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);font-weight:900}
-.welcome{font-family:Georgia,serif;font-size:29px;margin-top:5px}
-.meta{text-align:right}.date{font-size:16px;font-weight:800}.time{font-size:29px;font-weight:900;color:var(--accent2)}
+.welcome{font-family:Georgia,serif;font-size:clamp(40px,3.2vw,62px);font-weight:700;line-height:1;margin-top:0;white-space:nowrap}
+.meta{text-align:right}.date{font-size:14px;font-weight:800}.time{font-size:27px;font-weight:900;color:var(--accent2)}
 .video{position:relative;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:hidden}
 .debug{display:none;position:absolute;inset:0;align-items:center;justify-content:center;border:2px dashed var(--accent);color:var(--accent2);background:rgba(0,0,0,.25);font-size:28px;font-weight:900}
 body.debug .debug{display:flex}
@@ -96,7 +96,7 @@ body[data-season="fall"]{--bg:#17120f;--bg2:#342016;--panel:#2b1d15;--panel2:#4a
 
   <section class="right">
     <header class="panel header">
-      <div><div class="season" id="seasonLabel">Fall at Versailles UMC</div><div class="welcome">Welcome to Versailles UMC</div></div>
+      <div><div class="welcome">Welcome to Versailles UMC</div></div>
       <div class="meta"><div class="date" id="headerDate"></div><div class="time" id="headerTime"></div></div>
     </header>
 
@@ -223,7 +223,6 @@ function chooseSeason(now=new Date()){
 function applySeason(){
   const [key,label]=chooseSeason();
   document.body.dataset.season=key;
-  document.getElementById("seasonLabel").textContent=label;
 }
 function updateClock(){
   const now=new Date();
